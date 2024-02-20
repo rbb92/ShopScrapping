@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shopscrapping.ui.screens.ScrapingScreen
+import com.example.shopscrapping.ui.screens.ScrappingHomeContent
 import com.example.shopscrapping.ui.utils.ScreenSize
 import com.example.shopscrapping.viewmodel.ScrapViewModel
 
@@ -36,12 +37,18 @@ fun ShopScrappingApp(
 //            navigationType = ReplyNavigationType.BOTTOM_NAVIGATION
 //        }
 //    }
-    ScrapingScreen(
+
+    ScrappingHomeContent(
         scrapUiState = scrapUiState,
-        onButtonPress = { url: String ->
-            Log.d("ablanco","boton pulsado")
-            viewModel.scrapeUrl(url)
-        },
+        scrapViewModel = viewModel,
         modifier = modifier
     )
+//    ScrapingScreen(
+//        scrapUiState = scrapUiState,
+//        onButtonPress = { url: String ->
+//            Log.d("ablanco","boton pulsado")
+//            viewModel.scrapeUrl(url)
+//        },
+//        modifier = modifier
+//    )
 }

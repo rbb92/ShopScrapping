@@ -28,7 +28,9 @@ class ScrapViewModel : ViewModel() {
                 price = scrapData.price,
                 title = scrapData.title,
                 description = scrapData.description,
-                src_image = scrapData.src_image
+                src_image = scrapData.src_image,
+                isError = scrapData.isError,
+                isScrapping = scrapData.isScrapping
             )
 
         }
@@ -37,7 +39,9 @@ class ScrapViewModel : ViewModel() {
     fun scrapeUrl( url: String){
         viewModelScope.launch {
             Log.d("ablanco","preparando scrape")
+            _scrapState.update { it.copy(isScrapping = true) }
             updateScrapeUIState(AmazonFetcher(url))
+//            _scrapState.update { it.copy(isScrapping = false) }
 //            fetchAmazonStore(url)
 //            updateScrapeUIState(fetchAmazonStore(url))
         }

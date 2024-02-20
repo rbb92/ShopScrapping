@@ -2,23 +2,22 @@ package com.example.shopscrapping.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,66 +46,84 @@ fun ScrapingScreen(
 )
 {
     var urlText by remember { mutableStateOf("") }
-    var isButtonPressed by remember { mutableStateOf(false) }
+    var isSearchButtonPressed by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
+    Log.d("ablancom","updated...")
     Column (
         modifier = modifier
-            .fillMaxSize()
-            .padding(top = 25.dp, start = 16.dp, end =16.dp),
+//            .fillMaxSize()
+            .padding(top = 25.dp, start = 16.dp, end = 16.dp)
+            .pointerInput(Unit){
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        TextField(
-            value = urlText,
-            onValueChange = { newText ->
-                urlText = newText
-            },
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onButtonPress(urlText) }),
-
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { onButtonPress(urlText)
-                isButtonPressed=true},
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("Enviar")
-        }
-        if (isButtonPressed){
-            Spacer(modifier = Modifier.height(26.dp))
-            Text(
-                text = scrapUiState.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            val imagePainter: Painter = rememberCoilPainter(
-                request = scrapUiState.src_image
-            )
-            Image(
-                painter = imagePainter,
-                contentDescription = null,
+    ) {
+        if (!isSearchButtonPressed)
+        {
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                value = urlText,
+                onValueChange = { newText ->
+                    urlText = newText
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { onButtonPress(urlText) }),
+                maxLines = 5,
                 modifier = Modifier
-                    .fillMaxWidth(0.6f)
-                    ,
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = scrapUiState.price,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.Red,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-            Spacer(modifier = Modifier.height(26.dp))
+                    .fillMaxWidth()
+                )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    onButtonPress(urlText)
+                    isSearchButtonPressed = true
+                },
+                modifier = Modifier.
+                    fillMaxWidth()
+
+            ) {
+
+                Text("Buscar")
+            }
+            if(scrapUiState.isError)
+            {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Hubo un error")
+            }
+            Spacer(modifier = Modifier)
+        }
+        else
+        {
+
+            if(scrapUiState.isScrapping)
+            {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp),
+
+                )
+            }
+            else
+            {
+                if(scrapUiState.isError)
+                {
+                    isSearchButtonPressed = false
+                }
+                else
+                {
+                    ScrapingDetailScreen(
+                        scrapUiState,
+                        modifier = modifier.weight(1f,false)
+                    )
+                }
+
+            }
+
 
         }
     }

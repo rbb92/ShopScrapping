@@ -147,8 +147,10 @@ suspend fun AmazonFetcher(url: String): ScrapUiState =
             }
         }catch (exc:Exception){
             exc.printStackTrace()
-            Log.d("Error",exc.toString())
-            ScrapUiState(url=url)
+            Log.d("ablancom",exc.toString())
+            ScrapUiState(
+                url=url,
+                isError = true)
         }finally {
             androidClient.close()
         }

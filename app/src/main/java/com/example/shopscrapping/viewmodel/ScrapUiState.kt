@@ -5,6 +5,8 @@ data class ScrapUiState(
     val price: String = "",
     val title: String = "",
     val description: String = "",
-    val src_image: String = "")
+    val src_image: String = "",
+    val isScrapping: Boolean = false,
+    val isError: Boolean = false)
 {
 }

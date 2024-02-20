@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.engage:engage-core:1.3.1")
     val ktor_version = "2.3.7"
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
