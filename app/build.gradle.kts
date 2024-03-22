@@ -70,6 +70,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
 
+    //Works
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    //Room
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+
+    //Scrap
     implementation("it.skrape:skrapeit:1.1.5")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")

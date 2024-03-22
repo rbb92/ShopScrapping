@@ -2,9 +2,7 @@ package com.example.shopscrapping.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,17 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -33,7 +27,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,22 +38,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.shopscrapping.viewmodel.ScrapUiState
+import com.example.shopscrapping.data.ScrapState
 import com.google.accompanist.coil.rememberCoilPainter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScrapingDetailScreen(
-    scrapUiState: ScrapUiState,
+    scrapUiState: ScrapState,
     modifier: Modifier
 )
 {
@@ -138,8 +128,8 @@ fun ScrapingDetailScreen(
                         },
                         enabled = !inStockOption,
                         singleLine = true,
-                        label = { Text(text = "Precio") },
-                        supportingText = { Text(text = "Informar cuando el producto baje de este precio")},
+                        label = { Text(text = "precio") },
+                        supportingText = { Text(text = "Alerta de precio")},
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
 
 
@@ -149,7 +139,7 @@ fun ScrapingDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 10.dp))
                     {
-                        Text(text = "Informar cuando haya stock")
+                        Text(text = "Alerta de stock")
                         Spacer(modifier = Modifier)
                         RadioButton(selected = inStockOption, onClick = { inStockOption = !inStockOption })
                     }

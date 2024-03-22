@@ -3,6 +3,7 @@ package com.example.shopscrapping.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.scrapingTool.AmazonFetcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,18 +11,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ScrapViewModel : ViewModel() {
-    private val _scrapState = MutableStateFlow(ScrapUiState())
-    val scrapeState: StateFlow<ScrapUiState> = _scrapState
+    private val _scrapState = MutableStateFlow(ScrapState())
+    val scrapeState: StateFlow<ScrapState> = _scrapState
 
     init {
         clearScrapeUIState()
     }
 
     fun clearScrapeUIState() {
-        _scrapState.value = ScrapUiState()
+        _scrapState.value = ScrapState()
     }
 
-    fun updateScrapeUIState( scrapData: ScrapUiState) {
+    fun updateScrapeUIState( scrapData: ScrapState) {
         _scrapState.update {
             it.copy(
                 url = scrapData.url,

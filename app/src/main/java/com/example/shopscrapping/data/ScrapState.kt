@@ -1,7 +1,8 @@
-package com.example.shopscrapping.viewmodel
+package com.example.shopscrapping.data
 
-data class ScrapUiState(
+data class ScrapState(
     val url: String = "",
+    val store: Store = Store.AMAZON,
     val price: String = "",
     val title: String = "",
     val description: String = "",

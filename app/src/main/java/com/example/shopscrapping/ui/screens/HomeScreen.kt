@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Drafts
-import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
@@ -28,22 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shopscrapping.R
 import com.example.shopscrapping.data.TabsTypes
-import com.example.shopscrapping.ui.utils.ScreenSize
-import com.example.shopscrapping.viewmodel.ScrapUiState
+import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.viewmodel.ScrapViewModel
 
 
 @Composable
 fun ScrappingHomeContent(
-    scrapUiState: ScrapUiState,
+    scrapUiState: ScrapState,
     scrapViewModel: ScrapViewModel,
     modifier: Modifier
 ) {

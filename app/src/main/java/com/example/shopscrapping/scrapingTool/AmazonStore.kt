@@ -1,49 +1,24 @@
 package com.example.shopscrapping.scrapingTool
 
 import android.util.Log
-import com.example.shopscrapping.viewmodel.ScrapUiState
+import com.example.shopscrapping.data.ScrapState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 import it.skrape.core.htmlDocument
-import it.skrape.fetcher.AsyncFetcher
-import it.skrape.fetcher.BlockingFetcher
-import it.skrape.fetcher.BrowserFetcher
-import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.extractBlocking
-import it.skrape.fetcher.response
-import it.skrape.fetcher.skrape
-import it.skrape.fetcher.Result
-import it.skrape.fetcher.Cookie
 
 
 import io.ktor.client.*
-import io.ktor.client.engine.android.Android
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.UserAgent
-import io.ktor.http.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.util.flattenEntries
-import io.ktor.util.toMap
-import io.ktor.utils.io.core.*
-import it.skrape.fetcher.NonBlockingFetcher
-import it.skrape.fetcher.Request
-import it.skrape.fetcher.*
 import it.skrape.selects.and
-import it.skrape.selects.attribute
-import it.skrape.selects.html5.div
 import it.skrape.selects.html5.img
 import it.skrape.selects.html5.span
-import it.skrape.selects.text
-import kotlinx.coroutines.runBlocking
 
 
-
-
-suspend fun AmazonFetcher(url: String): ScrapUiState =
+suspend fun AmazonFetcher(url: String): ScrapState =
     withContext(Dispatchers.IO) {
         //configure client
         val androidClient = HttpClient(OkHttp){
@@ -138,7 +113,7 @@ suspend fun AmazonFetcher(url: String): ScrapUiState =
                         attribute("src")
                     }
                 }
-                ScrapUiState(
+                ScrapState(
                     url = url,
                     price = price,
                     title = title,
@@ -148,7 +123,7 @@ suspend fun AmazonFetcher(url: String): ScrapUiState =
         }catch (exc:Exception){
             exc.printStackTrace()
             Log.d("ablancom",exc.toString())
-            ScrapUiState(
+            ScrapState(
                 url=url,
                 isError = true)
         }finally {
