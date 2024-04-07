@@ -38,12 +38,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.shopscrapping.data.Period
 import com.example.shopscrapping.data.ScrapState
+import com.example.shopscrapping.data.ScrapWorkDescription
+import com.example.shopscrapping.ui.notificationTest
+import com.example.shopscrapping.viewmodel.ScrapViewModel
 import com.google.accompanist.coil.rememberCoilPainter
 
 
@@ -51,6 +56,8 @@ import com.google.accompanist.coil.rememberCoilPainter
 @Composable
 fun ScrapingDetailScreen(
     scrapUiState: ScrapState,
+    scrapViewModel: ScrapViewModel,
+    goBack: ()->Unit,
     modifier: Modifier
 )
 {
@@ -60,6 +67,7 @@ fun ScrapingDetailScreen(
     var selectedOption by remember { mutableStateOf(timeOptions[0]) }
     var inStockOption by remember { mutableStateOf(false) }
 
+    val currentContext = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     Column (verticalArrangement= Arrangement.SpaceBetween,
@@ -195,12 +203,30 @@ fun ScrapingDetailScreen(
                     Row (horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.padding(horizontal = 10.dp))
                     {
-                        Button(onClick = { /*TODO*/ },) {
-                            Text(text = "TODO")
+                        Button(onClick = {
+                            //TODO mover a una funcion
+                            val pos_aux = timeOptions.indexOf(selectedOption)
+
+                            val workDescription = ScrapWorkDescription("",
+                                scrapUiState.url,
+                                scrapUiState.store,
+                                inStockOption,
+                                priceLimit.toFloatOrNull()?:0.0f,
+                                Period.values()[pos_aux]
+                                )
+
+                            scrapViewModel.createNewWork(workDescription)
+                            //TODO mensaje work anadido
+                            notificationTest(currentContext,"probando","Mensaje de prueba")
+                            goBack()
+                        })
+                        {
+                            Text(text = "Añadir")
                         }
                         Spacer(modifier = Modifier.padding(horizontal = 36.dp))
-                        Button(onClick = { /*TODO*/ },) {
-                            Text(text = "TODO2")
+                        Button(onClick = goBack)
+                        {
+                            Text(text = "Cancelar")
                         }
                     }
 

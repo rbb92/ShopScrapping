@@ -1,6 +1,7 @@
 package com.example.shopscrapping.data
 
 data class ScrapWorkDescription(
+    var uUID: String = "",
     val url: String,
     val store: Store,
     val isStock: Boolean,

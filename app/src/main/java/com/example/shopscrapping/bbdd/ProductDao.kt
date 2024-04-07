@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProductDao {
     @Query("SELECT * from Product ORDER BY precio ASC")
     fun getAllProducts(): Flow<List<ProductEntity>>
-    @Query("SELECT * from Product WHERE IDProducto = :id")
+    @Query("SELECT * from Product WHERE UUID = :id")
     fun getProductById(id: Int): Flow<ProductEntity>
 
     @Query("SELECT * from Product WHERE URL = :id")

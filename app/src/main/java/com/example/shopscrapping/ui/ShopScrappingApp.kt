@@ -16,8 +16,6 @@ fun ShopScrappingApp(
     windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: ScrapViewModel = viewModel()
-    val scrapUiState = viewModel.scrapeState.collectAsState().value
 
     val screenSize = ScreenSize.PORTRAIT
     /***TODO: Para detectar el tipo de pantalla y adaptar posteriormente la GUI a ello ***/
@@ -39,8 +37,6 @@ fun ShopScrappingApp(
 //    }
 
     ScrappingHomeContent(
-        scrapUiState = scrapUiState,
-        scrapViewModel = viewModel,
         modifier = modifier
     )
 //    ScrapingScreen(

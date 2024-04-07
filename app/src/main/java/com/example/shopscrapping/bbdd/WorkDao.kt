@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface WorkDao {
     @Query("SELECT * from Work ORDER BY precioAlerta ASC")
     fun getAllWorks(): Flow<List<WorkEntity>>
-    @Query("SELECT * from Work WHERE IDProducto = :id")
+    @Query("SELECT * from Work WHERE UUID = :id")
     fun getWorkByProductId(id: Int): Flow<WorkEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

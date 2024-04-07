@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Drafts
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
@@ -38,8 +39,6 @@ import com.example.shopscrapping.viewmodel.ScrapViewModel
 
 @Composable
 fun ScrappingHomeContent(
-    scrapUiState: ScrapState,
-    scrapViewModel: ScrapViewModel,
     modifier: Modifier
 ) {
     var tabSelection by remember { mutableStateOf( TabsTypes.ScrapScreen) }
@@ -52,7 +51,7 @@ fun ScrappingHomeContent(
         ),
         NavigationItemContent(
             type = TabsTypes.ScrapListScreen,
-            icon = Icons.Default.Send,
+            icon = Icons.Default.List,
             text = stringResource(id = R.string.tab_list_scrapping)
         ),
         NavigationItemContent(
@@ -72,11 +71,6 @@ fun ScrappingHomeContent(
                 when (tabSelection)
                 {
                     TabsTypes.ScrapScreen -> ScrapingScreen(
-                        scrapUiState = scrapUiState,
-                        onButtonPress = { url: String ->
-                            Log.d("ablanco","boton pulsado")
-                            scrapViewModel.scrapeUrl(url)
-                        },
                         modifier = Modifier
                             .weight(1f)
                             .padding(
@@ -147,13 +141,7 @@ private data class NavigationItemContent(
 @Preview
 fun TestHomeGui()
 {
-    val viewModel: ScrapViewModel = viewModel()
-    val scrapUiState = viewModel.scrapeState.collectAsState().value
-
-
     ScrappingHomeContent(
-        scrapUiState = scrapUiState,
-        scrapViewModel = viewModel,
         modifier = Modifier
     )
 }

@@ -2,6 +2,7 @@ package com.example.shopscrapping.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -15,6 +16,7 @@ class WorkManagerScrapRepository(context: Context) : ScrapWorkRepository {
     override fun addNewWork(description: ScrapWorkDescription) {
         val data = Data.Builder()
         data.putString(UrlScrappingWorker.URL, description.url)
+        data.putString(UrlScrappingWorker.UUID, description.uUID)
         data.putBoolean(UrlScrappingWorker.STOCK_ALERT, description.isStock)
         data.putFloat(UrlScrappingWorker.PRICE_ALERT, description.priceLimit)
         data.putString(UrlScrappingWorker.STORE, description.store.name)
@@ -25,8 +27,9 @@ class WorkManagerScrapRepository(context: Context) : ScrapWorkRepository {
             .build()
 
         //TODO -> Generar UUID para el work  y almacenarlo en una bbdd local, de momento usando URL como id del work.
+        Log.d("ablancom","Valor de UUID asociado: ${description.uUID}")
         workManager.enqueueUniquePeriodicWork(
-            UrlScrappingWorker.URL,
+            description.uUID,
             ExistingPeriodicWorkPolicy.KEEP,
             workRequestBuilder)
     }
