@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ProductEntity::class,WorkEntity::class], version = 1, exportSchema = true)
+@Database(entities = [ProductEntity::class,WorkEntity::class], version = 2, exportSchema = true)
 abstract class ScrappingDatabase: RoomDatabase() {
     abstract fun workDao(): WorkDao
     abstract fun productDao(): ProductDao

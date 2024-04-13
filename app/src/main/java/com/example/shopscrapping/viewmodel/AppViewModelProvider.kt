@@ -38,7 +38,8 @@ object AppViewModelProvider {
 
         //TODO Initializer for ScrapListViewModel
         initializer {
-            ScrapListViewModel(shopScrappingApplication().container.databaseRepository)
+            ScrapListViewModel(shopScrappingApplication().container.databaseRepository,
+                                shopScrappingApplication().container.scrapWorkRepository)
         }
     }
 }

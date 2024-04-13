@@ -61,6 +61,7 @@ fun ScrappingHomeContent(
             text = "TODO"
         )
     )
+//    TODO Migrar a Scaffold? https://developer.android.com/develop/ui/compose/components/scaffold?hl=es-419
     Box(modifier = modifier) {
         Row(modifier = Modifier.fillMaxSize()) {}
             Column(
@@ -77,16 +78,17 @@ fun ScrappingHomeContent(
                                 horizontal = 16.dp
                             )
                     )
-                    TabsTypes.ScrapListScreen -> Text("TODO 2...", modifier =Modifier
+                    TabsTypes.ScrapListScreen -> ScrapingListScreen( modifier =
+                    Modifier
                         .weight(1f)
                         .padding(
                             horizontal = 16.dp
                         ))
-                    TabsTypes.Screen3 -> Text("TODO 3...", modifier =Modifier
-                        .weight(1f)
-                        .padding(
-                            horizontal = 16.dp
-                        ))
+                    TabsTypes.Screen3 -> Text("TODO 3...", modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        horizontal = 16.dp
+                    ))
                 }
 
                 AnimatedVisibility(

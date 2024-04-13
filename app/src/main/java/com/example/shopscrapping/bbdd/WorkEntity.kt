@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
         entity = ProductEntity::class,
         parentColumns = ["UUID"],
         childColumns = ["UUID"],
-//        onDelete = ForeignKey.CASCADE
+        onDelete = ForeignKey.CASCADE
     )]
 )
 data class WorkEntity(

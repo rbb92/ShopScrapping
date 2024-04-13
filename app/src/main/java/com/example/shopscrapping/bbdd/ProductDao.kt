@@ -17,6 +17,11 @@ interface ProductDao {
 
     @Query("SELECT * from Product WHERE URL = :id")
     fun getProductByUrl(id: Int): Flow<ProductEntity>
+    @Query("SELECT * from Product WHERE UUID = :uuid")
+    fun getProductByUUID(uuid: String): Flow<ProductEntity>
+
+    @Query("DELETE from Product WHERE UUID = :uuid")
+    suspend fun deleteFromUUID(uuid: String)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: ProductEntity)
