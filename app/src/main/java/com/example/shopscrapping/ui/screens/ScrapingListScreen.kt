@@ -25,7 +25,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -36,11 +38,13 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +57,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +68,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,6 +79,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shopscrapping.data.ScrapListState
 import com.example.shopscrapping.data.ScrapedItem
+import com.example.shopscrapping.notifications.showToast
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.ScrapListViewModel
 import com.google.accompanist.coil.rememberCoilPainter
@@ -86,7 +93,7 @@ fun ScrapingListScreen(
     scrapListViewModel: ScrapListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 )
 {
-
+    Log.d("ablancom","IN LIST SCRAP SCREEN!!!")
     when(scrapListViewModel.scrapListState) {
         is ScrapListState.Loading -> LoadingScrapListScreen(modifier = modifier.fillMaxSize())
         is ScrapListState.Empty -> EmptyScrapListScreen(modifier = modifier.fillMaxSize())
@@ -102,16 +109,46 @@ fun LoadedScrapListScreen(
     scrapListViewModel: ScrapListViewModel,
     listItems: List<ScrapedItem>
 ) {
-    LazyColumn(modifier = modifier)
+    val listState = rememberLazyListState()
+//    var previous by remember {mutableStateOf(-1)}
+//    var accumulate by remember {mutableStateOf(0)}
+
+
+    scrapListViewModel.getScrapList()
+    if(listItems.size==0)
+        EmptyScrapListScreen(modifier = modifier)
+    LazyColumn(state = listState, modifier = modifier)
     {
-        items(items = listItems) {
+        items(listItems.size) {
             ScrapItemCard(
                 scrapListViewModel = scrapListViewModel,
-                scrapItem = it,
+                scrapItem = listItems.get(it),
                 modifier = Modifier.padding(8.dp))
 //            Text(text = "TODO, item ${it.url}, precio ${it.currentPrice}, UUID ${it.uuid}")
         }
+
     }
+    //TODO quitar efecto scroll, no me convence, y poner un boton de actualizar
+//    LaunchedEffect(listState.isScrollInProgress) {
+//        Log.d("ablancom","paso 0 ${listState.firstVisibleItemScrollOffset}")
+//
+//        if (listState.firstVisibleItemScrollOffset == previous)
+//        {
+//            accumulate += 1
+//        }
+//        else
+//        {
+//            accumulate = 0
+//        }
+//        if(accumulate > 2)
+//        {
+//            accumulate = 0
+//            scrapListViewModel.getScrapList()
+//        }
+//        previous = listState.firstVisibleItemScrollOffset
+//        Log.d("ablancom","paso 1 ${accumulate}, ${previous}")
+//    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -200,6 +237,8 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                              modifier: Modifier)
 {
     val storeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
+    var showRemoveDialog by remember { mutableStateOf(false) }
+    val currentContext = LocalContext.current
 
     Column(
         modifier = modifier
@@ -262,7 +301,9 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
 
                 }
                 Divider(modifier = Modifier, thickness = 2.dp)
-                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp))
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 12.dp))
                 {
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
@@ -334,8 +375,8 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                 }
 
                 Button(onClick = {
-                    //TODO eliminar work
-                    scrapListViewModel.removeWork(scrapItem.uuid)
+                    showRemoveDialog = true
+//                    scrapListViewModel.removeWork(scrapItem.uuid)
 
                     },
                     shape = MaterialTheme.shapes.medium,
@@ -347,6 +388,35 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         modifier = modifier.size(24.dp)
                     )
                 }
+            if (showRemoveDialog) {
+                AlertDialog(
+                    onDismissRequest = { showRemoveDialog = false},
+                    title = {Text("Borrar producto")},
+                    text = {Text("¿Estás seguro de que deseas borrar el producto de la lista?")},
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                scrapListViewModel.removeWork(scrapItem.uuid)
+                                scrapListViewModel.getScrapList()
+                                showToast(currentContext, "Producto eliminado de la lista \uD83D\uDDD1️")
+                                showRemoveDialog = false
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            Text("Sí")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                showRemoveDialog = false
+                            }
+                        ) {
+                            Text("No")
+                        }
+                    }
+                )
+            }
 
             }
 
@@ -426,15 +496,23 @@ fun FullImage(url_img: String, modifier: Modifier) {
 }
 @Composable
 fun EmptyScrapListScreen(modifier: Modifier) {
-    Column (modifier = modifier){
-        Text(text = "TODO, VENTANA VACIA")
+    Column (modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+        Text(text = "Ups, no has añadido ningún producto todavía \uD83D\uDE1F")
     }
 }
 
 @Composable
 fun LoadingScrapListScreen(modifier: Modifier) {
-    Column (modifier = modifier){
-        Text(text = "TODO, VENTANA CARGANDO!!")
+    Column (modifier = modifier, verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(modifier= Modifier.size(124.dp))
+            Text(text = "Buscando...")
+        }
     }
 }
 

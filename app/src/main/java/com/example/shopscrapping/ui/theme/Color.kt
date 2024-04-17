@@ -5,14 +5,18 @@ import androidx.compose.ui.graphics.Color
 //TODO ajustar colores
 
 //Basic color palette for lightScheme
-val Flax = Color(0xFFF3E37C)
+//val Flax = Color(0xFFF3E37C)
+val Flax = Color(0xFF3494D5)    //IMPORTANTE
 val Naples_yellow = Color(0xFFF3D34A)
 val Butterscotch = Color(0xFFEEA243)
-val Gamboge = Color(0xFFF3A738)
-val Peach_yellow = Color(0xFFF1D9A7)
+//val Gamboge = Color(0xFFF3A738)
+val Gamboge = Color(0x601EE9E2)     //IMPORTANTE
+val Peach_yellow = Color(0xFF9C27B0)
+//val Peach_yellow = Color(0xFFF1D9A7)
 
 
 val md_theme_light_primary = Flax
+//val md_theme_light_onPrimary = Color.White
 val md_theme_light_onPrimary = Color.White
 val md_theme_light_primaryContainer = Naples_yellow
 val md_theme_light_onPrimaryContainer = Color(0xFF001F26)
@@ -35,14 +39,14 @@ val md_theme_light_onErrorContainer = Color(0xFF410002)
 val md_theme_light_background = Color(0xFFFBFCFD)
 val md_theme_light_onBackground = Color(0xFF191C1D)
 
-val md_theme_light_surface = Color(0xFFFBFCFD)
+val md_theme_light_surface = Color(0xFFFBFCFD)  //IMPORTANTE
 val md_theme_light_onSurface = Color(0xFF191C1D)
-val md_theme_light_surfaceVariant = Color(0xFFDBE4E7)
-val md_theme_light_onSurfaceVariant = Color(0xFF3F484B)
+val md_theme_light_surfaceVariant = Color(0xFFDBE4E7)  //IMPORTANTE
+val md_theme_light_onSurfaceVariant = Color(0xFF3F484B) //IMPORTANTE
 val md_theme_light_outline = Color(0xFF6F797B)
-val md_theme_light_inverseOnSurface = Color(0xFFEFF1F2)
+val md_theme_light_inverseOnSurface = Color(0xFFEFF1F2) //IMPORTANTE
 val md_theme_light_inverseSurface = Color(0xFF2E3132)
-val md_theme_light_inversePrimary = Color(0xFF54D7F3)
+val md_theme_light_inversePrimary = md_theme_light_surfaceVariant
 val md_theme_light_surfaceTint = Color(0xFF006879)
 val md_theme_light_outlineVariant = Color(0xFFBFC8CB)
 val md_theme_light_scrim = Color(0xFF000000)

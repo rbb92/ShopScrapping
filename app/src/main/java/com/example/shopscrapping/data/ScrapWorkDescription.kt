@@ -5,6 +5,7 @@ data class ScrapWorkDescription(
     val url: String,
     val store: Store,
     val isStock: Boolean,
+    val isAllPrices: Boolean,
     val priceLimit: Float,
     val period: Period
 

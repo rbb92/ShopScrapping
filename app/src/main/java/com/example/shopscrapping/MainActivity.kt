@@ -20,11 +20,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ShopScrappingTheme(dynamicColor = false, darkTheme = true) {
+            ShopScrappingTheme(dynamicColor = false, darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface{
                     val windowSize = calculateWindowSizeClass(this)
                     ShopScrappingApp(
+                        context = applicationContext,
                         windowSize = windowSize.widthSizeClass,
                     )
                 }

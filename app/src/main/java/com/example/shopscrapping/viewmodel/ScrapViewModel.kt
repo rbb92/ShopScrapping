@@ -1,6 +1,7 @@
 package com.example.shopscrapping.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shopscrapping.bbdd.DatabaseRepository
@@ -30,16 +31,24 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
         _scrapState.value = ScrapState()
     }
 
+    fun inScrapingState(){
+        _scrapState.update { it.copy(isScrappingProcess = true) }
+    }
+    fun outScrapingState(){
+        _scrapState.update { it.copy(isScrappingProcess = false) }
+    }
     fun updateScrapeUIState( scrapData: ScrapState) {
         _scrapState.update {
             it.copy(
                 url = scrapData.url,
                 price = scrapData.price,
+                globalMinPrice =scrapData.globalMinPrice,
                 title = scrapData.title,
                 description = scrapData.description,
                 src_image = scrapData.src_image,
                 isError = scrapData.isError,
-                isScrapping = scrapData.isScrapping
+                isScrapping = scrapData.isScrapping,
+                isScrappingProcess = scrapData.isScrappingProcess
             )
 
         }
@@ -48,9 +57,10 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
     fun scrapeUrl( url: String){
         viewModelScope.launch {
             Log.d("ablanco","preparando scrape")
-            _scrapState.update { it.copy(isScrapping = true) }
-            updateScrapeUIState(AmazonFetcher(url))
-//            _scrapState.update { it.copy(isScrapping = false) }
+
+            _scrapState.update { it.copy(isScrapping = true, isScrappingProcess = true) }
+            updateScrapeUIState(AmazonFetcher(url)) //Se crea un nuevo ScrapeState
+            _scrapState.update { it.copy(isScrappingProcess = true) }
 //            fetchAmazonStore(url)
 //            updateScrapeUIState(fetchAmazonStore(url))
         }
@@ -64,33 +74,37 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
             Log.d("ablancom", "Nuevo work creado ${generatedUUID}")
             Log.d("ablancom", "Valor del precio del producto ${_scrapState.value.price}")
             Log.d("ablancom", "Valor del precio del producto float ${priceToFloat(_scrapState.value.price)}")
-            dbRepository.insertProduct(descriptionToProductEntity(description))
-            dbRepository.insertWork(descriptionToWorkEntity(description))
+            dbRepository.insertProduct(DescriptionToProductEntity(description))
+            dbRepository.insertWork(DescriptionToWorkEntity(description))
         }
     }
 
-    fun descriptionToWorkEntity(description: ScrapWorkDescription): WorkEntity =
+    fun DescriptionToWorkEntity(description: ScrapWorkDescription): WorkEntity =
         WorkEntity(description.uUID,
                    description.isStock,
+                   description.isAllPrices,
                    description.priceLimit,
                    description.period.minutes,
               null,
                    System.currentTimeMillis(),
+            0,
             0)
 
-    fun descriptionToProductEntity(description: ScrapWorkDescription): ProductEntity =
+    fun DescriptionToProductEntity(description: ScrapWorkDescription): ProductEntity =
         ProductEntity(description.uUID,
                       _scrapState.value.url,
                       _scrapState.value.title,
                       _scrapState.value.description,
                       priceToFloat(_scrapState.value.price),
+                      priceToFloat(_scrapState.value.globalMinPrice),
                       _scrapState.value.store.name,
                       _scrapState.value.src_image,
             "")
 
     fun priceToFloat(price: String): Float {
+
         val onlyNumbersprice = price.replace(Regex("[^\\d.,]"), "")
-        return onlyNumbersprice.replace(Regex("[,]"), ".").toFloatOrNull() ?: 0.0f
+        return onlyNumbersprice.replace(Regex("[,]"), ".").replace(Regex("\\.(?=.*\\.)"), "").toFloatOrNull() ?: 0.0f
     }
 
 }

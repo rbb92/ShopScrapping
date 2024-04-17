@@ -10,6 +10,7 @@ data class ProductEntity(
     val nombre: String,
     val descripcion: String,
     val precio: Float,
+    val precioGlobalMin: Float,
     val tienda: String,
     val urlImagen: String,
     val urlReferido: String

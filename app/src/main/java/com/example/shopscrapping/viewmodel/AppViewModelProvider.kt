@@ -29,7 +29,10 @@ import com.example.shopscrapping.ShopScrappingApplication
  * Provides Factory to create instance of ViewModel for the entire Inventory app
  */
 object AppViewModelProvider {
-    val Factory = viewModelFactory {
+    val Factory = viewModelFactory {        // Initializer for ItemEditViewModel
+        initializer {
+            HomeViewModel(shopScrappingApplication())
+        }
         // Initializer for ItemEditViewModel
         initializer {
             ScrapViewModel(shopScrappingApplication().container.databaseRepository,

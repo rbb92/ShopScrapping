@@ -101,24 +101,59 @@ suspend fun AmazonFetcher(url: String): ScrapState =
                             }
                         }
                         catch (e: Exception){
-                            "No disponible"
+                            "0,0€"
                         }
                     }
                 }
 
-                val url_img = img {
+                val globalMinPrice = try
+                {
+                    //productos generales
+                    span {
+                        withClass = "a-price" and  "aok-align-center"
+                        span {
+                            withClass = "a-offscreen"
+                            findAll{
+                                var min_price=""
+                                map{
+                                    val it_price_float = AmazonPriceToFloat(it.text)
+                                    val min_price_float = AmazonPriceToFloat(min_price)
+
+                                    Log.d("ablancom","it_price_float ${it_price_float}, min_price_float ${min_price_float}")
+                                    if(min_price_float == 0.0f)
+                                        min_price = it.text
+                                    else
+                                    if(it_price_float != 0.0f)
+                                        if(it_price_float < min_price_float && min_price_float != 0.0f)
+                                            min_price = it.text
+
+                                    Log.d("ablancom","min_price ${min_price}, it.text ${it.text}")
+                                }
+                                Log.d("ablancom","precio minimo ${min_price}")
+                                min_price
+                                
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // TODO Resto productos, oobtener todos los precios y sacar el minimo        
+                    "0,0f"
+                }
+
+                val urlImg = img {
                     withId = "landingImage"
                     findFirst {
-                        Log.d("url_img", attribute("src"))
+                        Log.d("urlImg", attribute("src"))
                         attribute("src")
                     }
                 }
                 ScrapState(
                     url = url,
                     price = price,
+                    globalMinPrice = globalMinPrice,
                     title = title,
                     description = "",
-                    src_image = url_img)
+                    src_image = urlImg)
             }
         }catch (exc:Exception){
             exc.printStackTrace()
@@ -134,6 +169,10 @@ suspend fun AmazonFetcher(url: String): ScrapState =
 //        Log.d("ablancom", response.bodyAsText().takeLast(100000))
     }
 
+fun AmazonPriceToFloat(price_str: String): Float  {
+    val onlyNumbersprice = price_str.replace(Regex("[^\\d.,]"), "")
+    return onlyNumbersprice.replace(Regex("[,]"), ".").replace(Regex("\\.(?=.*\\.)"), "").toFloatOrNull() ?: 0.0f
+}
 
 
 

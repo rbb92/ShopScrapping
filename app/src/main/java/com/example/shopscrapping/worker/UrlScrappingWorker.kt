@@ -3,16 +3,12 @@ package com.example.shopscrapping.worker
 import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
-import androidx.work.Data
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.scrapingTool.StoreFetcher
-import com.example.shopscrapping.ui.notificationTest
-import kotlinx.coroutines.CoroutineScope
+import com.example.shopscrapping.notifications.notificationTest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UrlScrappingWorker(

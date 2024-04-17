@@ -28,7 +28,8 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
 
     fun getScrapList(){
         viewModelScope.launch {
-            scrapListState = ScrapListState.Loading
+            if(scrapListState !is ScrapListState.Success)
+                scrapListState = ScrapListState.Loading
             scrapListState = try {
                 val fullList = mutableListOf<ScrapedItem>()
                 val works = dbRepository.getAllWorks().first()
