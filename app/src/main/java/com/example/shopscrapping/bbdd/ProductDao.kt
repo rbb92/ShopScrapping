@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Query("SELECT * from Product ORDER BY precio ASC")
+    @Query("SELECT * from Product ORDER BY precioInicial ASC")
     fun getAllProducts(): Flow<List<ProductEntity>>
     @Query("SELECT * from Product WHERE UUID = :id")
     fun getProductById(id: Int): Flow<ProductEntity>

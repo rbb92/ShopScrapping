@@ -1,13 +1,13 @@
-package com.example.shopscrapping.data
+package com.example.shopscrapping.work
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.shopscrapping.worker.UrlScrappingWorker
+import com.example.shopscrapping.data.ScrapWorkDescription
+import com.example.shopscrapping.data.ScrapWorkRepository
 import java.util.concurrent.TimeUnit
 
 class WorkManagerScrapRepository(context: Context) : ScrapWorkRepository {

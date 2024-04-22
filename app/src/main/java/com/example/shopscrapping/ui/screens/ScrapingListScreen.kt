@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
@@ -42,6 +43,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
@@ -69,14 +71,18 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.shopscrapping.R
 import com.example.shopscrapping.data.ScrapListState
 import com.example.shopscrapping.data.ScrapedItem
 import com.example.shopscrapping.notifications.showToast
@@ -210,7 +216,7 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
                 if (!isAnimationComplete)
                 {
                 ImageIcon(scrapItem.src_image, modifier.alpha(alpha))
-                ScrapInformation(scrapItem.title,scrapItem.initialPrice,scrapItem.currentPrice,scrapItem.isStock,modifier.alpha(alpha))
+                ScrapInformation(scrapItem.title,scrapItem.priceDifference,scrapItem.currentPrice, modifier.alpha(alpha))
                 }
 
 
@@ -256,7 +262,10 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface),
+//            border = CardDefaults.outlinedCardBorder(true),
+            elevation = CardDefaults.outlinedCardElevation(defaultElevation = 5.dp)
         ){
             Column(modifier = Modifier.padding(14.dp)) {
                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth())
@@ -270,7 +279,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Spacer(modifier = Modifier)
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
-                        text = "20.33€",
+                        text = "${ scrapItem.initialPrice }€",
                         style = MaterialTheme.typography.labelMedium
                     )
 
@@ -286,15 +295,32 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Spacer(modifier = Modifier)
                     Row()
                     {
-                        Icon(imageVector = Icons.Filled.ArrowDropUp,contentDescription = null, modifier= Modifier.size(16.dp))
-                        Text(
-                            text = "13%",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        )
+                        if (scrapItem.priceDifference > 0)
+                        {
+                            Icon(imageVector = Icons.Filled.ArrowDropDown,contentDescription = null, modifier= Modifier.size(16.dp))
+                            Text(
+                                text = "${ scrapItem.priceDifference }%",
+                                color = colorResource(id = R.color.green_increase),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            )
+                        }
+
+                        if (scrapItem.priceDifference < 0)
+                        {
+                            Icon(imageVector = Icons.Filled.ArrowDropUp,contentDescription = null, modifier= Modifier.size(16.dp))
+                            Text(
+                                text = "${ (-1)*scrapItem.priceDifference }%",
+                                color = Color.Red,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            )
+                        }
+
+
                         Spacer(modifier = Modifier.size(12.dp))
                         Text(
-                            text = "20.33€",
+                            text = "${ scrapItem.currentPrice }€",
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
@@ -314,7 +340,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Spacer(modifier = Modifier)
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
-                        text = "123",
+                        text = "${scrapItem.numberSearch}",
                         style = MaterialTheme.typography.labelMedium
                     )
 
@@ -341,7 +367,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Text(
                             modifier = Modifier.padding(top = 6.dp, start = 30.dp),
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            text = "Avisar cuando precio sea inferior a ${scrapItem.limitPrice}",
+                            text = "Avisar cuando precio sea inferior a ${scrapItem.limitPrice}€",
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -426,7 +452,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
 
 
 @Composable
-fun ScrapInformation(title: String, initialPrice: Float, currentPrice: Float, stock: Boolean, modifier: Modifier) {
+fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float,  modifier: Modifier) {
     Column(modifier = modifier) {
         Text(
             text = title,
@@ -439,22 +465,48 @@ fun ScrapInformation(title: String, initialPrice: Float, currentPrice: Float, st
         {
             Text(
                     text = "No disponible",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
-        }
-        else if(initialPrice == 0.0f)
-        {
-            Text(
-                text = "${currentPrice} €",
-                style = MaterialTheme.typography.bodyLarge
-            )
         }
         else
         {
-            Text(
-                text = "${currentPrice} € (${initialPrice} € )",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Row (modifier = modifier, horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = "${currentPrice} €",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.size(15.dp))
+                if (diffPrice > 0)
+                {
+                    Text(
+                        text = "${ diffPrice }%",
+                        color = colorResource(id = R.color.green_increase),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    )
+                    Icon(imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = null,
+                        modifier= Modifier.size(24.dp).padding(top = 8.dp, end = 4.dp),
+                        tint = colorResource(id = R.color.green_increase))
+
+                }
+
+                if (diffPrice < 0)
+                {
+                    Text(
+                        text = "${ (-1)*diffPrice }%",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    )
+                    Icon(imageVector = Icons.Filled.ArrowDropUp,
+                        contentDescription = null,
+                        modifier= Modifier.size(24.dp).padding(top = 8.dp, end = 4.dp),
+                        tint = Color.Red)
+                }
+
+            }
+
         }
     }
 }

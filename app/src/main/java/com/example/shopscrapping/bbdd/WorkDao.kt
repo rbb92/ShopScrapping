@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 interface WorkDao {
     @Query("SELECT * from Work ORDER BY precioAlerta ASC")
     fun getAllWorks(): Flow<List<WorkEntity>>
-    @Query("SELECT * from Work WHERE UUID = :id")
-    fun getWorkByProductId(id: Int): Flow<WorkEntity>
+    @Query("SELECT * from Work WHERE UUID = :uuid")
+    fun getWorkByUUID(uuid: String): Flow<WorkEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: WorkEntity)

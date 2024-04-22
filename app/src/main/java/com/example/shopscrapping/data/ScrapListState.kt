@@ -12,6 +12,7 @@ data class ScrapedItem(
     var initialPrice: Float = 0.0f,
     var currentPrice: Float = 0.0f,
     var limitPrice: Float = 0.0f,
+    var priceDifference: Int = 0, //percentage
     var isStock: Boolean = false,
     var store: String = "",
     var description: String = "",

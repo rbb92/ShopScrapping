@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface WorkRepository {
     fun getAllWorks(): Flow<List<WorkEntity>>
-    fun getWorkByProductId(id: Int): Flow<WorkEntity>
+    fun getWorkByUUID(uuid: String): Flow<WorkEntity>
 
     suspend fun insertWork(item: WorkEntity)
 

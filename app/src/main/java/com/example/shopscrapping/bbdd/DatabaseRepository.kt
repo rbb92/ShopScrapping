@@ -9,9 +9,6 @@ class DatabaseRepository(private val productDao: ProductDao,
                             WorkRepository, ProductRepository{
     override fun getAllProducts(): Flow<List<ProductEntity>> = productDao.getAllProducts()
 
-    override fun getProductById(id: Int): Flow<ProductEntity?> = productDao.getProductById(id)
-
-    override fun getProductByUrl(id: Int): Flow<ProductEntity?> = productDao.getProductByUrl(id)
     override fun getProductByUUID(uuid: String): Flow<ProductEntity?> = productDao.getProductByUUID(uuid)
 
     override suspend fun insertProduct(item: ProductEntity) = productDao.insert(item)
@@ -22,7 +19,7 @@ class DatabaseRepository(private val productDao: ProductDao,
 
     override fun getAllWorks(): Flow<List<WorkEntity>> = workDao.getAllWorks()
 
-    override fun getWorkByProductId(id: Int): Flow<WorkEntity> = workDao.getWorkByProductId(id)
+    override fun getWorkByUUID(uuid: String): Flow<WorkEntity> = workDao.getWorkByUUID(uuid)
 
     override suspend fun insertWork(item: WorkEntity) = workDao.insert(item)
 

@@ -2,6 +2,7 @@ package com.example.shopscrapping.scrapingTool
 
 import android.util.Log
 import com.example.shopscrapping.data.ScrapState
+import com.example.shopscrapping.utils.priceToFloat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -116,8 +117,8 @@ suspend fun AmazonFetcher(url: String): ScrapState =
                             findAll{
                                 var min_price=""
                                 map{
-                                    val it_price_float = AmazonPriceToFloat(it.text)
-                                    val min_price_float = AmazonPriceToFloat(min_price)
+                                    val it_price_float = priceToFloat(it.text)
+                                    val min_price_float = priceToFloat(min_price)
 
                                     Log.d("ablancom","it_price_float ${it_price_float}, min_price_float ${min_price_float}")
                                     if(min_price_float == 0.0f)
@@ -169,10 +170,6 @@ suspend fun AmazonFetcher(url: String): ScrapState =
 //        Log.d("ablancom", response.bodyAsText().takeLast(100000))
     }
 
-fun AmazonPriceToFloat(price_str: String): Float  {
-    val onlyNumbersprice = price_str.replace(Regex("[^\\d.,]"), "")
-    return onlyNumbersprice.replace(Regex("[,]"), ".").replace(Regex("\\.(?=.*\\.)"), "").toFloatOrNull() ?: 0.0f
-}
 
 
 

@@ -42,13 +42,19 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
                         fullItem.title = it.nombre
                         fullItem.uuid = it.UUID
                         fullItem.src_image = it.urlImagen
-                        fullItem.initialPrice = it.precio
+                        fullItem.initialPrice = it.precioInicial
+                        fullItem.currentPrice = if (element.todosPrecios) it.precioActualGobal else it.precioActual
                         fullItem.store = it.tienda
                     }
                     fullItem.numberSearch = element.numeroBusquedas
                     fullItem.limitPrice = element.precioAlerta
                     fullItem.isStock = element.stockAlerta
-                    fullItem.currentPrice = 0.0f // TODO: asigna el precio actual correctamente
+
+                    if((fullItem.initialPrice == 0.0f) or (fullItem.currentPrice == 0.0f))
+                        fullItem.priceDifference = 0
+                    else
+                        fullItem.priceDifference = ((fullItem.initialPrice - fullItem.currentPrice)*100/(fullItem.initialPrice)).toInt()
+
 
                     fullList.add(fullItem)
                 }

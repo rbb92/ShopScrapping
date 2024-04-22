@@ -1,7 +1,6 @@
 package com.example.shopscrapping.viewmodel
 
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shopscrapping.bbdd.DatabaseRepository
@@ -11,6 +10,7 @@ import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.ScrapWorkDescription
 import com.example.shopscrapping.data.ScrapWorkRepository
 import com.example.shopscrapping.scrapingTool.AmazonFetcher
+import com.example.shopscrapping.utils.priceToFloat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -88,6 +88,8 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
               null,
                    System.currentTimeMillis(),
             0,
+            0,
+            0,
             0)
 
     fun DescriptionToProductEntity(description: ScrapWorkDescription): ProductEntity =
@@ -95,16 +97,13 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
                       _scrapState.value.url,
                       _scrapState.value.title,
                       _scrapState.value.description,
-                      priceToFloat(_scrapState.value.price),
+                      if(description.isAllPrices) priceToFloat(_scrapState.value.globalMinPrice) else priceToFloat(_scrapState.value.price),
                       priceToFloat(_scrapState.value.globalMinPrice),
+                      if(description.isAllPrices) priceToFloat(_scrapState.value.globalMinPrice) else priceToFloat(_scrapState.value.price),
                       _scrapState.value.store.name,
                       _scrapState.value.src_image,
             "")
 
-    fun priceToFloat(price: String): Float {
 
-        val onlyNumbersprice = price.replace(Regex("[^\\d.,]"), "")
-        return onlyNumbersprice.replace(Regex("[,]"), ".").replace(Regex("\\.(?=.*\\.)"), "").toFloatOrNull() ?: 0.0f
-    }
 
 }

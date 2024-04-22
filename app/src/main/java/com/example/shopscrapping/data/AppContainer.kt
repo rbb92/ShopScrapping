@@ -3,6 +3,7 @@ package com.example.shopscrapping.data
 import android.content.Context
 import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.bbdd.ScrappingDatabase
+import com.example.shopscrapping.work.WorkManagerScrapRepository
 
 interface AppContainer {
     val scrapWorkRepository : ScrapWorkRepository
