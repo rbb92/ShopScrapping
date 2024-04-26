@@ -13,13 +13,17 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +32,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -40,6 +45,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -65,7 +71,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -86,6 +91,8 @@ import com.example.shopscrapping.R
 import com.example.shopscrapping.data.ScrapListState
 import com.example.shopscrapping.data.ScrapedItem
 import com.example.shopscrapping.notifications.showToast
+import com.example.shopscrapping.utils.convertirMinutosADiasYMinutos
+import com.example.shopscrapping.utils.epochToString
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.ScrapListViewModel
 import com.google.accompanist.coil.rememberCoilPainter
@@ -121,6 +128,8 @@ fun LoadedScrapListScreen(
 
 
     scrapListViewModel.getScrapList()
+
+//    Spacer(modifier = Modifier.size(24.dp))
     if(listItems.size==0)
         EmptyScrapListScreen(modifier = modifier)
     LazyColumn(state = listState, modifier = modifier)
@@ -194,46 +203,76 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
 
 
     Card(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(top = 15.dp)
+            .border(
+                width = if(scrapListViewModel.mainGoal(scrapItem) or scrapListViewModel.secundaryGoal(scrapItem))4.dp else 2.dp,
+                color = if(scrapListViewModel.mainGoal(scrapItem)) Color.Red else MaterialTheme.colorScheme.secondary, // Color del borde
+                shape = MaterialTheme.shapes.small
+            ),
         onClick = {expanded = !expanded},
-        elevation = CardDefaults.cardElevation(8.dp), // Ajusta la elevación aquí para cambiar la profundidad
+        elevation = CardDefaults.cardElevation(14.dp), // Ajusta la elevación aquí para cambiar la profundidad
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
-                )
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-
-            ) {
-                if (!isAnimationComplete)
-                {
-                ImageIcon(scrapItem.src_image, modifier.alpha(alpha))
-                ScrapInformation(scrapItem.title,scrapItem.priceDifference,scrapItem.currentPrice, modifier.alpha(alpha))
-                }
-
-
-            }
-            if (expanded and isAnimationComplete) {
-                ScrapInformationExpanded(
-                    scrapListViewModel,
-                    scrapItem,
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 8.dp,
-                        bottom = 16.dp,
-                        end = 16.dp
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        )
                     )
-                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+
+                ) {
+                    if (!isAnimationComplete) {
+                        ImageIcon(scrapItem.src_image, modifier.alpha(alpha))
+                        ScrapInformation(
+                            scrapItem.title,
+                            scrapItem.priceDifference,
+                            scrapItem.currentPrice,
+                            modifier.alpha(alpha)
+                        )
+                    }
+
+
+                }
+                if (expanded and isAnimationComplete) {
+                    ScrapInformationExpanded(
+                        scrapListViewModel,
+                        scrapItem,
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 8.dp,
+                            bottom = 16.dp,
+                            end = 16.dp
+                        )
+                    )
+                }
+            }
+
+            if(scrapListViewModel.mainGoal(scrapItem) or scrapListViewModel.secundaryGoal(scrapItem))
+            {
+                Box(
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .offset(x = (-8).dp, y = (8).dp) // Ajusta la posición del badge
+                ) {
+                    // Contenido del badge
+                    Badge(modifier = Modifier) {
+                        Text(text = "\uD83C\uDF1F")
+                    }
+                }
             }
         }
+
     }
 }
 
@@ -274,13 +313,13 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         modifier = Modifier.padding(bottom = 6.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                         text = "Precio inicial",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(modifier = Modifier)
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
                         text = "${ scrapItem.initialPrice }€",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
 
                 }
@@ -290,7 +329,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         modifier = Modifier.padding(bottom = 16.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                         text = "Precio actual",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(modifier = Modifier)
                     Row()
@@ -321,15 +360,51 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Spacer(modifier = Modifier.size(12.dp))
                         Text(
                             text = "${ scrapItem.currentPrice }€",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
 
                 }
-                Divider(modifier = Modifier, thickness = 2.dp)
+                Divider(modifier = Modifier, thickness = 4.dp)
                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 12.dp))
+                    .padding(top = 6.dp, bottom = 6.dp))
+                {
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp, top = 6.dp),
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        text = "Se añadió en",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Spacer(modifier = Modifier)
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp, top = 6.dp),
+                        text = epochToString(scrapItem.initialDate),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+
+                }
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, bottom = 6.dp))
+                {
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp),
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        text = "Periodo de busqueda",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Spacer(modifier = Modifier)
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp),
+                        text = convertirMinutosADiasYMinutos(scrapItem.periodAlert),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+
+                }
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, bottom = 6.dp))
                 {
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
@@ -486,7 +561,9 @@ fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float,  modifi
                     )
                     Icon(imageVector = Icons.Filled.ArrowDropDown,
                         contentDescription = null,
-                        modifier= Modifier.size(24.dp).padding(top = 8.dp, end = 4.dp),
+                        modifier= Modifier
+                            .size(24.dp)
+                            .padding(top = 8.dp, end = 4.dp),
                         tint = colorResource(id = R.color.green_increase))
 
                 }
@@ -501,7 +578,9 @@ fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float,  modifi
                     )
                     Icon(imageVector = Icons.Filled.ArrowDropUp,
                         contentDescription = null,
-                        modifier= Modifier.size(24.dp).padding(top = 8.dp, end = 4.dp),
+                        modifier= Modifier
+                            .size(24.dp)
+                            .padding(top = 8.dp, end = 4.dp),
                         tint = Color.Red)
                 }
 
@@ -533,9 +612,10 @@ fun FullImage(url_img: String, modifier: Modifier) {
     Row (modifier=Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
         Image(
             modifier = modifier
-                .size(220.dp)
-                .wrapContentWidth()
-                .padding(1.dp)
+//                .size(220.dp)
+                .fillMaxWidth(0.8f)
+//                .wrapContentWidth()
+//                .padding(1.dp)
                 .clip(MaterialTheme.shapes.small),
             contentScale = ContentScale.Crop,
             painter = rememberCoilPainter(

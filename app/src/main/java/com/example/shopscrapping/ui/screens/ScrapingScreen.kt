@@ -91,8 +91,8 @@ fun ScrapingScreen(
                 value = urlText,
                 textStyle = MaterialTheme.typography.bodyLarge,
                 colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.Black,
-                    cursorColor = Color.Black,
+//                    textColor = Color.Black,
+//                    cursorColor = Color.Black,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),

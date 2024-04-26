@@ -5,11 +5,15 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.shopscrapping.bbdd.DatabaseRepository
+import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.bbdd.ScrappingDatabase
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.scrapingTool.StoreFetcher
 import com.example.shopscrapping.notifications.notificationTest
+import com.example.shopscrapping.utils.isInternetAvailable
+import com.example.shopscrapping.utils.isMobileDataConnected
+import com.example.shopscrapping.utils.isWifiConnected
 import com.example.shopscrapping.utils.priceToFloat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -34,9 +38,15 @@ class UrlScrappingWorker(
 
 
 
+        Log.d("ablancom", "esta internet habilitado?: ${isInternetAvailable(currentContext)}")
+        Log.d("ablancom", "esta wifi habilitado?: ${isWifiConnected(currentContext)}")
+        Log.d("ablancom", "esta datos moviles habilitado?: ${isMobileDataConnected(currentContext)}")
         //TODO antes de realizar el scrapeo, comprobar si hay restriccion de uso solo por wifi.
+        if(PreferencesManager(currentContext).isOnlyWifi())
+            if(!isWifiConnected(currentContext))
+                return Result.success()
 
-
+        Log.d("ablancom", "MODO SOLO WIFI ${PreferencesManager(currentContext).isOnlyWifi()}")
 
         var scrapState = ScrapState()
         withContext(Dispatchers.IO){
@@ -79,6 +89,7 @@ class UrlScrappingWorker(
             dataForWorkCore.latestPrice = it.precioActual
             dataForWorkCore.latestMinPrice = it.precioActualGobal
             dataForWorkCore.initialPrice = it.precioInicial
+            dataForWorkCore.imgSrc = it.urlImagen
             workOfProduct.let {
                 dataForWorkCore.isStock = it.stockAlerta
                 dataForWorkCore.isAllPrice = it.todosPrecios
@@ -113,7 +124,7 @@ class UrlScrappingWorker(
             Log.d("ablanco","new Entity for work updated: ${modifiedWork}")
         }
 
-        notificationTest(currentContext,"Work","Scrap with context: ${scrapState}",url)
+//        notificationTest(currentContext,"Work","Scrap with context: ${scrapState}",url)
         Log.d("ablanco","Scrapping as work done, result: \n${scrapState}")
         Log.d("ablanco","new Entity for work updated:")
 
@@ -141,6 +152,7 @@ data class RequirementsForWork(
     var latestPrice: Float = 0.0f,
     var latestMinPrice: Float = 0.0f,
     var initialPrice: Float = 0.0f,
+    var imgSrc: String ="",
     var urlReferido: String = "",
     var name: String = "",
     var isStock: Boolean = false,

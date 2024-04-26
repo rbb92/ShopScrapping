@@ -113,7 +113,7 @@ fun ScrappingHomeContent(
                         .padding(
                             horizontal = 16.dp
                         ))
-                    TabsTypes.Screen3 -> Text("TODO 3...", modifier = Modifier
+                    TabsTypes.Screen3 -> SettingsScreen( modifier = Modifier
                         .weight(1f)
                         .padding(
                             horizontal = 16.dp

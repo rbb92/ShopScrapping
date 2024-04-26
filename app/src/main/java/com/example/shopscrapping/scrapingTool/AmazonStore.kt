@@ -42,6 +42,9 @@ suspend fun AmazonFetcher(url: String): ScrapState =
 //                Log.d(s,strings.toString())
 //            }
 
+            Log.d("ablancom", "URL limpia 1: ${extraerDominio(url)}/dp/${extraerPathProducto(url)}")
+            Log.d("ablancom", "URL limpia 2: ${removerParametrosUrl(url)}")
+
             htmlDocument(response.bodyAsText())
             {
 
@@ -171,6 +174,10 @@ suspend fun AmazonFetcher(url: String): ScrapState =
     }
 
 
-
+fun extraerPathProducto(url: String): String? {
+    val regex = Regex("/d?p/(.*?)(?:/|\\?)")
+    val matchResult = regex.find(url)
+    return matchResult?.groupValues?.get(1)
+}
 
 

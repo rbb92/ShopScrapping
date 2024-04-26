@@ -3,8 +3,7 @@ package com.example.shopscrapping.work
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.shopscrapping.bbdd.PreferencesManager
-import com.example.shopscrapping.notifications.notificationMainGoal
-import com.example.shopscrapping.notifications.notificationSecondaryGoal
+import com.example.shopscrapping.notifications.notificationGoal
 
 
 //TODO esta clase recibe un context y un RequirementsForWork y toma la decision correspondiente
@@ -23,8 +22,8 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
     private fun secondaryGoal() {
         //Minimo 3 dias desde publicacion hasta empezar a emitir notificaciones secundarias.
         // Convertir milisegundos a
-        val diasDesdePublicaion = inputData.currentDate - inputData.initialDate / (1000 * 60 * 60 * 24)
-        val diasDesdeUltimaNotificacion = inputData.currentDate - inputData.latestNotificationDate / (1000 * 60 * 60 * 24)
+        val diasDesdePublicaion = (inputData.currentDate - inputData.initialDate) / (1000 * 60 * 60 * 24)
+        val diasDesdeUltimaNotificacion = (inputData.currentDate - inputData.latestNotificationDate) / (1000 * 60 * 60 * 24)
         if (diasDesdePublicaion >= 3)
         {
             if(diasDesdeUltimaNotificacion >= 1)
@@ -34,38 +33,61 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
                 {
                     //NOTIFICACIONES Ligeras
                     //Si precio inicial a bajado
-                    if(inputData.initialPrice > inputData.currentPrice)
+                    if((inputData.initialPrice > inputData.currentPrice)
+                        and (inputData.currentPrice>0.0f)
+                        and ((inputData.currentPrice/inputData.initialPrice)<=0.9f)) //bajada del 10% del precio
                     {
-                        secondaryGoalNotification(inputData.name,"Bajada de precio!", inputData.urlReferido)
+                        secondaryGoalNotification(inputData.name,"Bajada de precio!",
+                            inputData.urlReferido, inputData.imgSrc, inputData.currentPrice)
                         return
                     }
                     if(inputData.isStock and (inputData.currentMinPrice>0.0f))
                     {
 
-                        secondaryGoalNotification(inputData.name,"Disponible de segunda mano" ,inputData.urlReferido)
+                        secondaryGoalNotification(inputData.name,"Disponible de segunda mano" ,
+                            inputData.urlReferido, inputData.imgSrc, inputData.currentMinPrice)
                         return
                     }
                 }
                 else
                 {
                     //NOTIFICACIONES Medias
-                    if(!inputData.isAllPrice and (inputData.currentMinPrice <= inputData.alertPrice))
+                    if((!inputData.isAllPrice) and (inputData.currentMinPrice <= inputData.alertPrice) and (inputData.currentMinPrice>0.0f))
                     {
                         //objetivo cumplido pero para productos de ocasion
-                        secondaryGoalNotification(inputData.name,"Bajada de precio en ocasión" ,inputData.urlReferido)
+                        secondaryGoalNotification(inputData.name,"Bajada de precio en ocasión",
+                            inputData.urlReferido, inputData.imgSrc, inputData.currentMinPrice)
+                        return
                     }
                     if (diasDesdeUltimaNotificacion >= 5)
                     {
-                        if(inputData.initialPrice > inputData.currentPrice)
+                        if((inputData.initialPrice > inputData.currentPrice)
+                            and (inputData.currentPrice>0.0f)
+                            and ((inputData.currentPrice/inputData.initialPrice)<=0.9f)) //bajada del 10% del precio
                         {
-                            secondaryGoalNotification(inputData.name,"Bajada de precio" ,inputData.urlReferido)
+                            secondaryGoalNotification(inputData.name,"Bajada de precio" ,
+                                inputData.urlReferido, inputData.imgSrc, inputData.currentPrice)
                             return
                         }
                     }
 
                 }
+
             }
 
+        }
+        if ((!inputData.isAllPrice) and (inputData.latestPrice == 0.0f) and (inputData.currentPrice > 0.0f))
+        {
+            secondaryGoalNotification(inputData.name,"Vuelve a estar disponible!" ,
+                inputData.urlReferido, inputData.imgSrc, inputData.currentPrice)
+            return
+        }
+        if ((inputData.isAllPrice) and (((inputData.latestPrice == 0.0f) and  (inputData.currentPrice > 0.0f)) or
+                    ((inputData.latestMinPrice == 0.0f) and  (inputData.currentMinPrice > 0.0f))))
+        {
+            secondaryGoalNotification(inputData.name,"Vuelve a estar disponible!" ,
+                inputData.urlReferido, inputData.imgSrc, inputData.currentMinPrice)
+            return
         }
     }
 
@@ -79,7 +101,8 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
                 if(inputData.currentPrice > 0.0f)
                 {
                     //GENERAMOS NOTIFICACION!!
-                    mainGoalNotification(inputData.name, "Producto disponible!",inputData.urlReferido)
+                    mainGoalNotification(inputData.name, "Producto disponible!",
+                        inputData.urlReferido, inputData.imgSrc, inputData.currentPrice)
                     return true
                 }
             }
@@ -88,7 +111,8 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
                 if (inputData.currentMinPrice > 0.0f || inputData.currentPrice > 0.0f)
                 {
                     //GENERAMOS NOTIFICACION!!
-                    mainGoalNotification(inputData.name, "Producto disponible!",inputData.urlReferido)
+                    mainGoalNotification(inputData.name, "Producto disponible!",
+                        inputData.urlReferido, inputData.imgSrc, inputData.currentMinPrice)
                     return true
                 }
             }
@@ -98,19 +122,22 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
         {
             if(!inputData.isAllPrice)
             {
-                if(inputData.currentPrice <= inputData.alertPrice)
+                if((inputData.currentPrice <= inputData.alertPrice) and (inputData.currentPrice > 0.0f))
                 {
                     //GENERAMOS NOTIFICACION!!
-                    mainGoalNotification(inputData.name, "Tu producto ha bajado del limite!",inputData.urlReferido)
+                    mainGoalNotification(inputData.name, "Tu producto ha bajado del limite!",
+                        inputData.urlReferido, inputData.imgSrc, inputData.currentPrice)
                     return true
                 }
             }
             else
             {
-                if (inputData.currentMinPrice <= inputData.alertPrice || inputData.currentPrice <= inputData.alertPrice)
+                if ((inputData.currentMinPrice <= inputData.alertPrice) and (inputData.currentMinPrice > 0.0f) ||
+                    (inputData.currentPrice <= inputData.alertPrice) and (inputData.currentPrice > 0.0f))
                 {
                     //GENERAMOS NOTIFICACION!!
-                    mainGoalNotification(inputData.name, "Tu producto ha bajado del limite!",inputData.urlReferido)
+                    mainGoalNotification(inputData.name, "Tu producto ha bajado del limite!",
+                        inputData.urlReferido, inputData.imgSrc, inputData.currentMinPrice)
                     return true
                 }
             }
@@ -118,17 +145,22 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
         return false
     }
 
-    private fun mainGoalNotification(message: String, header:String, url:String)
+    private fun mainGoalNotification(message: String, header:String, url:String, url_img: String, price:Float)
     {
-        notificationMainGoal(context, message, header, url)
+        //TODO price.toString(), llamar a metodo que traduzca float a string de precio
+        notificationGoal(context, message, "\uD83C\uDF89 HURRAY! ${header}", url, url_img, price.toString())
         notificationGenerated = true
         PreferencesManager(context).addBugdeListStar()
     }
-    private fun secondaryGoalNotification(message: String, header:String, url:String)
+    private fun secondaryGoalNotification(message: String, header:String, url:String, url_img: String, price:Float)
     {
-        notificationSecondaryGoal(context, message, header, url)
-        notificationGenerated = true
-        PreferencesManager(context).addBugdeListPoint()
+        //TODO price.toString(), llamar a metodo que traduzca float a string de precio
+        if(!PreferencesManager(context).isSecundaryNotificationsDisabled())
+        {
+            notificationGoal(context, message, "🎉 Novedad! ${header}", url, url_img, price.toString())
+            notificationGenerated = true
+            PreferencesManager(context).addBugdeListPoint()
+        }
     }
 
 }

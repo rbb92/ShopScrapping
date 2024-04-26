@@ -41,4 +41,9 @@ class PreferencesManager(context: Context) {
         saveBoolean("budge_list_point",false)
     }
     fun isBugdeListPoint() = getBoolean("budge_list_point")
+
+    fun isOnlyWifi() = getBoolean("wifi_mode")
+    fun setOnlyWifi(enabled:Boolean) = saveBoolean("wifi_mode",enabled)
+    fun isSecundaryNotificationsDisabled() = getBoolean("secundary_notifications_disabled")
+    fun setSecundaryNotificationsDisabled(disabled:Boolean) = saveBoolean("secundary_notifications_disabled",disabled)
 }

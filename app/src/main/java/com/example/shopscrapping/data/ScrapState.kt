@@ -2,6 +2,7 @@ package com.example.shopscrapping.data
 
 data class ScrapState(
     val url: String = "",
+    val url_refered: String = "",
     val store: Store = Store.AMAZON,
     val price: String = "",
     val globalMinPrice: String = "",

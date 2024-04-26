@@ -49,18 +49,23 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
                     fullItem.numberSearch = element.numeroBusquedas
                     fullItem.limitPrice = element.precioAlerta
                     fullItem.isStock = element.stockAlerta
+                    fullItem.initialDate = element.fechaInicio
+                    fullItem.latestNotification = element.fechaUltimaNotificacion
+                    fullItem.periodAlert = element.periodo
 
                     if((fullItem.initialPrice == 0.0f) or (fullItem.currentPrice == 0.0f))
                         fullItem.priceDifference = 0
                     else
                         fullItem.priceDifference = ((fullItem.initialPrice - fullItem.currentPrice)*100/(fullItem.initialPrice)).toInt()
 
+                    fullItem.initialDate = element.fechaInicio
 
                     fullList.add(fullItem)
                 }
 
                 Log.d("ablancom","Lista completa: ${fullList}")
-                ScrapListState.Success(fullList)
+                val sortedListDescending = fullList.sortedByDescending { it.initialDate }
+                ScrapListState.Success(sortedListDescending)
             }
             catch (e:Exception)
             {
@@ -71,11 +76,9 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
     }
 
     //TODO futuro, la idea es poder actualizar el tiempo y el precio-isStock de un item
-    fun updateWork(){
 
-    }
 
-    //TODO
+
     fun removeWork(uuid: String){
         viewModelScope.launch {
             Log.d("ablancom", "Borrando work con uuid  ${uuid}")
@@ -84,5 +87,17 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
             dbRepository.delete(uuid)
             Log.d("ablancom", "Borrado de la bbdd... ${uuid}")
         }
+    }
+    fun secundaryGoal(scrapItem: ScrapedItem ):Boolean  {
+        if(scrapItem.initialPrice > scrapItem.currentPrice)
+            return true
+        return false
+    }
+    fun mainGoal(scrapItem: ScrapedItem ):Boolean  {
+        if(scrapItem.isStock and (scrapItem.currentPrice >= 0.0f))
+            return true
+        if(scrapItem.currentPrice <= scrapItem.limitPrice)
+            return true
+        return false
     }
 }

@@ -65,6 +65,7 @@ import com.example.shopscrapping.notifications.notificationProductAdded
 import com.example.shopscrapping.notifications.notificationTest
 import com.example.shopscrapping.notifications.showToast
 import com.example.shopscrapping.ui.theme.md_theme_light_onSurface
+import com.example.shopscrapping.utils.priceToFloat
 import com.example.shopscrapping.viewmodel.ScrapViewModel
 import com.google.accompanist.coil.rememberCoilPainter
 
@@ -115,7 +116,7 @@ fun ScrapingDetailScreen(
                         text = scrapUiState.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+//                        color = Color.Black,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -158,7 +159,7 @@ fun ScrapingDetailScreen(
                                 Spacer(modifier = Modifier)
                                 Text(
                                     modifier = Modifier.padding(bottom = 6.dp),
-                                    text = scrapUiState.price.takeIf { it.isNotEmpty() } ?: "No disponible",
+                                    text = scrapUiState.price.takeIf { (priceToFloat(it, scrapUiState.store)>0.0f) } ?: "No disponible",
                                     style = MaterialTheme.typography.labelLarge
                                 )
 
@@ -181,7 +182,7 @@ fun ScrapingDetailScreen(
                                     Spacer(modifier = Modifier.size(12.dp))
                                     Text(
 
-                                        text = scrapUiState.globalMinPrice.takeIf { it.isNotEmpty() } ?: "No disponible",
+                                        text = scrapUiState.globalMinPrice.takeIf { (priceToFloat(it, scrapUiState.store)>0.0f)} ?: "No disponible",
                                         style = MaterialTheme.typography.labelLarge,
                                         fontStyle = FontStyle.Italic
                                     )

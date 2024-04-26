@@ -33,6 +33,9 @@ object AppViewModelProvider {
         initializer {
             HomeViewModel(shopScrappingApplication())
         }
+        initializer {
+            SettingsViewModel(shopScrappingApplication())
+        }
         // Initializer for ItemEditViewModel
         initializer {
             ScrapViewModel(shopScrappingApplication().container.databaseRepository,
