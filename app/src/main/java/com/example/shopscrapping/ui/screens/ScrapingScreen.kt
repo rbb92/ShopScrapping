@@ -1,7 +1,11 @@
 package com.example.shopscrapping.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.SavedSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -22,8 +28,13 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,14 +49,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.shopscrapping.data.ScrapState
+import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.ui.theme.md_theme_light_primary
 import com.example.shopscrapping.ui.theme.md_theme_light_primaryContainer
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
@@ -62,12 +77,13 @@ fun ScrapingScreen(
 {
     val scrapUiState = scrapViewModel.scrapeState.collectAsState().value
 
-    val onButtonPress = { url: String ->
+    val onButtonPress = { url: String, store:Store ->
         Log.d("ablanco","boton pulsado")
-        scrapViewModel.scrapeUrl(url)
+        scrapViewModel.scrapeUrl(url,store)
     }
 
     var urlText by remember { mutableStateOf("") }
+    var currentStore by remember { mutableStateOf(Store.NULL) }
 //    var isScrappingProcess by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -105,9 +121,13 @@ fun ScrapingScreen(
                 },
                 onValueChange = { newText ->
                     urlText = newText
+                    currentStore = if(scrapViewModel.detectStoreFromURL(urlText) != Store.NULL)
+                                    scrapViewModel.detectStoreFromURL(urlText)
+                                   else
+                                       currentStore
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { onButtonPress(urlText) }),
+                keyboardActions = KeyboardActions(onDone = { if (currentStore != Store.NULL) onButtonPress(urlText,currentStore) }),
                 maxLines = 5,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,7 +137,7 @@ fun ScrapingScreen(
 
             ElevatedButton(
                 onClick = {
-                    onButtonPress(urlText)
+                    onButtonPress(urlText,currentStore)
 
                     scrapViewModel.inScrapingState()
                 },
@@ -132,7 +152,16 @@ fun ScrapingScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
                 elevation = ButtonDefaults.buttonElevation(8.dp),
+                enabled = currentStore != Store.NULL
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            StoreMenu({ currentStore = it},currentStore, modifier)
+//            Spacer(modifier = Modifier.height(14.dp))
+//
+//            StoreDropdownMenu({ currentStore = it},currentStore)
+
             if(scrapUiState.isError)
             {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -187,6 +216,110 @@ fun ScrapingScreen(
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+//    var currentStore by remember { mutableStateOf(Store.NULL) }
+
+    val storeItems = Store.values().filter {
+        it != Store.NULL
+    }
+
+    Column {
+
+        Row(modifier = Modifier.clickable { expanded = true }
+                                .fillMaxWidth(0.6f)
+                                .background(MaterialTheme.colorScheme.background)
+                                .border(2.dp, Color.Black,RoundedCornerShape(8.dp)),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = if (currentStore != Store.NULL) currentStore.name else "Selecciona tienda",
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+//                    .align(Alignment.CenterStart),
+//                style = MaterialTheme.typography.bodyMedium,
+            )
+            IconButton(
+                onClick = { expanded = true },
+//                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+        ) {
+            storeItems.forEach { store ->
+                DropdownMenuItem(onClick = {
+                    updateStore(store)
+                    expanded = false
+                            },
+                    text = { Text(text = store.name) })
+            }
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun menuStores() {
+    val storeNames = Store.values()
+        .filter { it != Store.NULL }
+        .map { it.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } }
+        .toTypedArray()
+
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp)
+    ) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                value = selectedText,
+                onValueChange = { selectedText = it },
+                label = { Text(text = "Store") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor()
+            )
+
+            val filteredOptions =
+                storeNames.filter { it.contains(selectedText, ignoreCase = true) }
+            if (filteredOptions.isNotEmpty()) {
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        // We shouldn't hide the menu when the user enters/removes any character
+                    }
+                ) {
+                    filteredOptions.forEach { item ->
+                        DropdownMenuItem(
+                            text = { Text(text = item) },
+                            onClick = {
+                                selectedText = item
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Preview(showSystemUi = true)
 @Composable

@@ -20,9 +20,10 @@ data class ScrapedItem(
     var url: String = "",
     var uuid: String = "",
     var initialDate: Long = 0,
+    var latestSearch: Long = 0,
     var latestNotification: Long = 0,
-    var periodAlert: Long = 0
-
+    var periodAlert: Long = 0,
+    var currency: String = "€"
 ){
 
 }

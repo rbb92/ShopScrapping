@@ -1,7 +1,10 @@
 package com.example.shopscrapping.scrapingTool
 
 import android.util.Log
+import com.example.shopscrapping.data.ScrapProduct
 import com.example.shopscrapping.data.ScrapState
+import com.example.shopscrapping.data.Store
+import com.example.shopscrapping.data.SubProduct
 import com.example.shopscrapping.utils.priceToFloat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -151,13 +154,21 @@ suspend fun AmazonFetcher(url: String): ScrapState =
                         attribute("src")
                     }
                 }
+                val product = SubProduct(price = priceToFloat(price),
+                                         globalMinPrice = priceToFloat(globalMinPrice))
+                val subProduct = mutableListOf<SubProduct>()
+                subProduct.add(product)
+
                 ScrapState(
                     url = url,
-                    price = price,
-                    globalMinPrice = globalMinPrice,
-                    title = title,
-                    description = "",
-                    src_image = urlImg)
+                    url_refered = url,
+                    store = Store.AMAZON,
+                    product = ScrapProduct(
+                        title = title,
+                        src_image = urlImg,
+                        subProduct = subProduct)
+                    )
+
             }
         }catch (exc:Exception){
             exc.printStackTrace()

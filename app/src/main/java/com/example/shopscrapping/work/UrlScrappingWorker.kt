@@ -32,8 +32,6 @@ class UrlScrappingWorker(
     }
     override suspend fun doWork(): Result {
         val url = inputData.getString(URL)?:""
-        val stockAlert = inputData.getBoolean(STOCK_ALERT,false)
-        val priceAlert = inputData.getFloat(PRICE_ALERT,0f)
         val store: Store = Store.valueOf(inputData.getString(STORE)?: Store.AMAZON.name)
 
 
@@ -41,6 +39,8 @@ class UrlScrappingWorker(
         Log.d("ablancom", "esta internet habilitado?: ${isInternetAvailable(currentContext)}")
         Log.d("ablancom", "esta wifi habilitado?: ${isWifiConnected(currentContext)}")
         Log.d("ablancom", "esta datos moviles habilitado?: ${isMobileDataConnected(currentContext)}")
+
+
         //TODO antes de realizar el scrapeo, comprobar si hay restriccion de uso solo por wifi.
         if(PreferencesManager(currentContext).isOnlyWifi())
             if(!isWifiConnected(currentContext))
@@ -66,22 +66,52 @@ class UrlScrappingWorker(
             // de scrapeo del html) o problemas al hacer el scraping en el html, CONTABILIZAR busqueda fallida
             // Result.failure() ?¿
             workOfProduct.let{
-                val modifiedWork = it.copy(numeroBusquedasFallidas = it.numeroBusquedasFallidas + 1)
+                val modifiedWork = it.copy(numeroBusquedasFallidas = it.numeroBusquedasFallidas + 1,
+                                           fechaUltimaBusqueda = System.currentTimeMillis())
                 databaseRepository.updateWork(modifiedWork)
             }
 
             return Result.success()
         }
 
-        val dataForWorkCore = RequirementsForWork(
-            currentPrice = priceToFloat(scrapState.price) ,
-            currentMinPrice = priceToFloat(scrapState.globalMinPrice),
-            currentDate = System.currentTimeMillis()
-            )
         //finalizar? si product o workOfProduct estan vacios o son incoherentes, no deberia
         // nunca llegar a este caso!
         if((product == null) )
             return  Result.failure()
+
+        /////////////////     Extraemos el subproducto adecuado de la lista de scrapeo      /////////////////
+        Log.d("ablanco1","ScrapState extraido: ${scrapState}")
+        var price = 0.0f
+        var globalMinPrice = 0.0f
+        if (scrapState.product?.subProduct?.size!! > 1) //hay varios subproductos
+        {
+
+            val productId = product.productId
+            val subProducts = scrapState.product!!.subProduct
+            Log.d("ablanco1","Hay subproductos!!: ${productId}, la lista es: ${subProducts} ")
+            subProducts.forEach{
+                if(it.identifier == productId) //TODO -> identifier o reference??
+                {
+                    price = it.price
+                    globalMinPrice = it.globalMinPrice?: 0.0f
+                }
+            }
+        }
+        else //producto unico
+        {
+            price = scrapState.product!!.subProduct.get(0).price
+            globalMinPrice = scrapState.product!!.subProduct.get(0).globalMinPrice?: 0.0f
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        val dataForWorkCore = RequirementsForWork(
+            currentPrice = price ,
+            currentMinPrice = globalMinPrice,
+            currentDate = System.currentTimeMillis()
+            )
+
 
         product.let {
             dataForWorkCore.urlReferido = if (it.urlReferido.isNotBlank()) it.urlReferido else it.URL
@@ -103,6 +133,7 @@ class UrlScrappingWorker(
             }
         }
 
+        Log.d("ablanco1","DataForWorkCore: ${dataForWorkCore}")
 
         //llamamos a WorkCore
         val notificationEmited = WorkCore(currentContext,dataForWorkCore).makeDecision()
@@ -119,7 +150,8 @@ class UrlScrappingWorker(
         workOfProduct.let {
             val modifiedWork = it.copy(numeroBusquedas = it.numeroBusquedas+1,
                 numeroNotificaciones = if(notificationEmited) it.numeroNotificaciones+1 else it.numeroNotificaciones,
-                fechaUltimaNotificacion = if (notificationEmited) System.currentTimeMillis() else it.fechaUltimaNotificacion)
+                fechaUltimaNotificacion = if (notificationEmited) System.currentTimeMillis() else it.fechaUltimaNotificacion,
+                fechaUltimaBusqueda = System.currentTimeMillis())
             databaseRepository.updateWork(modifiedWork)
             Log.d("ablanco","new Entity for work updated: ${modifiedWork}")
         }

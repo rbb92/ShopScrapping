@@ -10,10 +10,9 @@ import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.data.ScrapListState
 import com.example.shopscrapping.data.ScrapWorkRepository
 import com.example.shopscrapping.data.ScrapedItem
-import com.example.shopscrapping.data.Store
+import com.example.shopscrapping.utils.currencyToString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 //TODO ScrapListViewModel
 class ScrapListViewModel(private val dbRepository: DatabaseRepository,
@@ -45,12 +44,14 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
                         fullItem.initialPrice = it.precioInicial
                         fullItem.currentPrice = if (element.todosPrecios) it.precioActualGobal else it.precioActual
                         fullItem.store = it.tienda
+                        fullItem.currency = currencyToString(it.moneda)
                     }
                     fullItem.numberSearch = element.numeroBusquedas
                     fullItem.limitPrice = element.precioAlerta
                     fullItem.isStock = element.stockAlerta
                     fullItem.initialDate = element.fechaInicio
                     fullItem.latestNotification = element.fechaUltimaNotificacion
+                    fullItem.latestSearch = element.fechaUltimaBusqueda
                     fullItem.periodAlert = element.periodo
 
                     if((fullItem.initialPrice == 0.0f) or (fullItem.currentPrice == 0.0f))
@@ -94,9 +95,9 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
         return false
     }
     fun mainGoal(scrapItem: ScrapedItem ):Boolean  {
-        if(scrapItem.isStock and (scrapItem.currentPrice >= 0.0f))
+        if(scrapItem.isStock and (scrapItem.currentPrice > 0.0f))
             return true
-        if(scrapItem.currentPrice <= scrapItem.limitPrice)
+        if((scrapItem.currentPrice <= scrapItem.limitPrice) and (scrapItem.currentPrice > 0.0f))
             return true
         return false
     }

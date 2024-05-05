@@ -7,7 +7,9 @@ suspend fun StoreFetcher (url: String, store:Store): ScrapState =
     when (store)
     {
         Store.AMAZON -> AmazonFetcher(url)
-        Store.NULL -> AmazonFetcher(url)
+        Store.ALIEXPRESS -> AliexpressFetcher(url) //TODO aliexpress store
+        else -> AmazonFetcher(url)
+
     }
 
 
@@ -28,7 +30,7 @@ fun extraerDominio(url: String): String? {
 }
 
 //TODO IMPORTANTE, ESTA FUNCION SERIA LA IDEAL PARA DEJAR LIMPIA LA URL E INSERTAR NUESTRO CODIGO REFERIDO.
-fun removerParametrosUrl(url: String): String? {
+fun removerParametrosUrl(url: String): String {
     val indiceInterrogante = url.indexOf('?')
     return if (indiceInterrogante != -1) {
         url.substring(0, indiceInterrogante)

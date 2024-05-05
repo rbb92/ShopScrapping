@@ -13,6 +13,8 @@ data class ProductEntity(
     val precioActualGobal: Float,
     val precioActual: Float,
     val tienda: String,
+    val moneda: String,
+    val productId: String,  //diferenciar version de producto (talla, capacidad) para un producto, que usara
     val urlImagen: String,
     val urlReferido: String
 )

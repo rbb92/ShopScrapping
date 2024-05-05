@@ -139,7 +139,6 @@ fun LoadedScrapListScreen(
                 scrapListViewModel = scrapListViewModel,
                 scrapItem = listItems.get(it),
                 modifier = Modifier.padding(8.dp))
-//            Text(text = "TODO, item ${it.url}, precio ${it.currentPrice}, UUID ${it.uuid}")
         }
 
     }
@@ -206,8 +205,11 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
         modifier = Modifier
             .padding(top = 15.dp)
             .border(
-                width = if(scrapListViewModel.mainGoal(scrapItem) or scrapListViewModel.secundaryGoal(scrapItem))4.dp else 2.dp,
-                color = if(scrapListViewModel.mainGoal(scrapItem)) Color.Red else MaterialTheme.colorScheme.secondary, // Color del borde
+                width = if (scrapListViewModel.mainGoal(scrapItem) or scrapListViewModel.secundaryGoal(
+                        scrapItem
+                    )
+                ) 4.dp else 2.dp,
+                color = if (scrapListViewModel.mainGoal(scrapItem)) Color.Red else MaterialTheme.colorScheme.secondary, // Color del borde
                 shape = MaterialTheme.shapes.small
             ),
         onClick = {expanded = !expanded},
@@ -239,6 +241,7 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
                             scrapItem.title,
                             scrapItem.priceDifference,
                             scrapItem.currentPrice,
+                            scrapItem.currency,
                             modifier.alpha(alpha)
                         )
                     }
@@ -262,7 +265,8 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
             if(scrapListViewModel.mainGoal(scrapItem) or scrapListViewModel.secundaryGoal(scrapItem))
             {
                 Box(
-                    modifier = Modifier.align(Alignment.TopEnd)
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
                         .offset(x = (-8).dp, y = (8).dp) // Ajusta la posición del badge
                 ) {
                     // Contenido del badge
@@ -286,7 +290,8 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
     val currentContext = LocalContext.current
 
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             modifier = Modifier.padding(bottom = 25.dp),
@@ -294,6 +299,20 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
+        if(scrapItem.description != "")
+        {
+            Divider(thickness = 3.dp)
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.padding(bottom = 25.dp),
+                text = scrapItem.description,
+                style = MaterialTheme.typography.titleSmall,
+                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+        }
+
         FullImage(url_img = scrapItem.src_image, modifier = modifier)
 
 
@@ -318,7 +337,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Spacer(modifier = Modifier)
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
-                        text = "${ scrapItem.initialPrice }€",
+                        text = "${ scrapItem.initialPrice } ${scrapItem.currency}",
                         style = MaterialTheme.typography.labelLarge
                     )
 
@@ -359,7 +378,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
 
                         Spacer(modifier = Modifier.size(12.dp))
                         Text(
-                            text = "${ scrapItem.currentPrice }€",
+                            text = "${ scrapItem.currentPrice } ${scrapItem.currency}",
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -420,6 +439,28 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     )
 
                 }
+                if(scrapItem.latestSearch != 0L){
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp, bottom = 6.dp)
+                    )
+                    {
+                        Text(
+                            modifier = Modifier.padding(bottom = 6.dp),
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            text = "Ultima busqueda",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Spacer(modifier = Modifier)
+                        Text(
+                            modifier = Modifier.padding(bottom = 6.dp),
+                            text = epochToString(scrapItem.latestSearch),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+
+                    }
+                }
                 Divider(modifier = Modifier, thickness = 4.dp)
                 Box(modifier = Modifier.padding(top = 16.dp),)
                 {
@@ -442,7 +483,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Text(
                             modifier = Modifier.padding(top = 6.dp, start = 30.dp),
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            text = "Avisar cuando precio sea inferior a ${scrapItem.limitPrice}€",
+                            text = "Avisar cuando precio sea inferior a ${scrapItem.limitPrice} ${scrapItem.currency}",
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -527,7 +568,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
 
 
 @Composable
-fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float,  modifier: Modifier) {
+fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float, currency: String,  modifier: Modifier) {
     Column(modifier = modifier) {
         Text(
             text = title,
@@ -547,7 +588,7 @@ fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float,  modifi
         {
             Row (modifier = modifier, horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text = "${currentPrice} €",
+                    text = "${currentPrice} ${currency}",
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.size(15.dp))

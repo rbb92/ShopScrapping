@@ -19,10 +19,10 @@ data class WorkEntity(
     val todosPrecios: Boolean,  //A tener en cuenta todos los precios.
     val precioAlerta: Float,
     val periodo: Long,   // Cada cuanto se realiza el scrapeo
-    val talla: String?,
     val fechaInicio: Long,
     val numeroBusquedas: Int,
     val numeroBusquedasFallidas: Int,
     val numeroNotificaciones: Int,
-    val fechaUltimaNotificacion: Long
+    val fechaUltimaNotificacion: Long,
+    val fechaUltimaBusqueda: Long
 )

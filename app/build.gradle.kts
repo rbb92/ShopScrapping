@@ -83,6 +83,10 @@ dependencies {
 
     //Scrap
     implementation("it.skrape:skrapeit:1.1.5")
+    implementation("it.skrape:skrapeit-browser-fetcher:1.1.5")
+
+    //Json parser
+    implementation("com.beust:klaxon:5.5")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-apache:$ktor_version")
@@ -92,6 +96,10 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:$ktor_version")
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-client-json:$ktor_version")
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

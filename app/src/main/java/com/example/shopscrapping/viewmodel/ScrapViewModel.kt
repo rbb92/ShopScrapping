@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.bbdd.ProductEntity
 import com.example.shopscrapping.bbdd.WorkEntity
+import com.example.shopscrapping.data.CurrentProduct
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.ScrapWorkDescription
 import com.example.shopscrapping.data.ScrapWorkRepository
-import com.example.shopscrapping.scrapingTool.AmazonFetcher
-import com.example.shopscrapping.utils.priceToFloat
+import com.example.shopscrapping.data.Store
+import com.example.shopscrapping.data.getStoreFromURL
+import com.example.shopscrapping.scrapingTool.StoreFetcher
+import com.example.shopscrapping.scrapingTool.extraerDominio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +25,9 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
 
     private val _scrapState = MutableStateFlow(ScrapState())
     val scrapeState: StateFlow<ScrapState> = _scrapState
+
+    private val _currentProduct = MutableStateFlow(CurrentProduct())
+    val currentProduct: StateFlow<CurrentProduct> = _currentProduct
 
     init {
         clearScrapeUIState()
@@ -41,11 +47,9 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
         _scrapState.update {
             it.copy(
                 url = scrapData.url,
-                price = scrapData.price,
-                globalMinPrice =scrapData.globalMinPrice,
-                title = scrapData.title,
-                description = scrapData.description,
-                src_image = scrapData.src_image,
+                url_refered = scrapData.url_refered,
+                store = scrapData.store,
+                product = scrapData.product,
                 isError = scrapData.isError,
                 isScrapping = scrapData.isScrapping,
                 isScrappingProcess = scrapData.isScrappingProcess
@@ -53,18 +57,64 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
 
         }
     }
+    fun updateCurrentProductUI()
+    {
+        val indexProduct = _scrapState.value.product?.subProductSelected ?: 0
+        val price = _scrapState.value.product?.subProduct?.get(indexProduct)?.price ?: 0.0f
+        val minPrice = _scrapState.value.product?.subProduct?.get(indexProduct)?.globalMinPrice
+        val currency = _scrapState.value.product?.currency ?: "EUR"
+        val title = _scrapState.value.product?.title ?: ""
+        val subTitle = _scrapState.value.product?.subProduct?.get(indexProduct)?.aditional_title ?: ""
+        val srcImageMain = _scrapState.value.product?.src_image ?: ""
+        val srcImageSec = _scrapState.value.product?.subProduct?.get(indexProduct)?.src_image ?: ""
+        val productId = _scrapState.value.product?.subProduct?.get(indexProduct)?.identifier ?: ""
+
+        _currentProduct.update {
+            it.copy(
+                url = _scrapState.value.url,
+                url_refered = _scrapState.value.url_refered,
+                store = _scrapState.value.store,
+                price = price,
+                currency = currency,
+                globalMinPrice = minPrice,
+                title = title,
+                description = subTitle,
+                src_image_main = srcImageMain,
+                src_image_sec = srcImageSec,
+                product_id = productId
+            )
+        }
+    }
+    fun selectSubProduct(index:Int) = _scrapState.update {
+            val updatedProduct = it.product?.copy(
+                subProductSelected = index
+            )
+            it.copy(
+                product = updatedProduct
+            )
+    }
+    fun numberSubProducts(): Int = _scrapState.value.product?.subProduct?.size ?: 1
+    fun haveSubProducts(): Boolean = _scrapState.value.product?.subProduct?.size!! > 1
+
+    fun subProductTitle(index: Int) = _scrapState.value.product?.subProduct?.get(index)?.aditional_title ?: ""
+    fun subProductImage(index: Int) = _scrapState.value.product?.subProduct?.get(index)?.src_image ?: ""
+
+    fun currentSubProduct() = _scrapState.value.product?.subProductSelected ?: 0
     //Corrutine scraping
-    fun scrapeUrl( url: String){
+    fun scrapeUrl( url: String, store: Store){
         viewModelScope.launch {
             Log.d("ablanco","preparando scrape")
 
             _scrapState.update { it.copy(isScrapping = true, isScrappingProcess = true) }
-            updateScrapeUIState(AmazonFetcher(url)) //Se crea un nuevo ScrapeState
+            updateScrapeUIState(StoreFetcher(url,store)) //Se crea un nuevo ScrapeState //TODO quitar ALIEXPRESS hardcoding
             _scrapState.update { it.copy(isScrappingProcess = true) }
+            updateCurrentProductUI()
 //            fetchAmazonStore(url)
 //            updateScrapeUIState(fetchAmazonStore(url))
         }
     }
+
+    fun detectStoreFromURL(url: String): Store = getStoreFromURL(url)
 
     fun createNewWork(description: ScrapWorkDescription){
         viewModelScope.launch {
@@ -72,8 +122,8 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
             description.uUID = generatedUUID
             scrapWorkRepository.addNewWork(description)
             Log.d("ablancom", "Nuevo work creado ${generatedUUID}")
-            Log.d("ablancom", "Valor del precio del producto ${_scrapState.value.price}")
-            Log.d("ablancom", "Valor del precio del producto float ${priceToFloat(_scrapState.value.price)}")
+//            Log.d("ablancom", "Valor del precio del producto ${_scrapState.value.price}")
+//            Log.d("ablancom", "Valor del precio del producto float ${priceToFloat(_scrapState.value.price)}")
             dbRepository.insertProduct(DescriptionToProductEntity(description))
             dbRepository.insertWork(DescriptionToWorkEntity(description))
         }
@@ -85,8 +135,8 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
                    description.isAllPrices,
                    description.priceLimit,
                    description.period.minutes,
-              null,
                    System.currentTimeMillis(),
+            0,
             0,
             0,
             0,
@@ -94,15 +144,17 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
 
     fun DescriptionToProductEntity(description: ScrapWorkDescription): ProductEntity =
         ProductEntity(description.uUID,
-                      _scrapState.value.url,
-                      _scrapState.value.title,
-                      _scrapState.value.description,
-                      if(description.isAllPrices) priceToFloat(_scrapState.value.globalMinPrice) else priceToFloat(_scrapState.value.price),
-                      priceToFloat(_scrapState.value.globalMinPrice),
-                      if(description.isAllPrices) priceToFloat(_scrapState.value.globalMinPrice) else priceToFloat(_scrapState.value.price),
+                      _currentProduct.value.url,
+                      _currentProduct.value.title,
+                      _currentProduct.value.description,
+                      if(description.isAllPrices) _currentProduct.value.globalMinPrice ?: _currentProduct.value.price else _currentProduct.value.price,
+            _currentProduct.value.globalMinPrice ?: _currentProduct.value.price,
+                      if(description.isAllPrices) _currentProduct.value.globalMinPrice ?: _currentProduct.value.price else _currentProduct.value.price,
                       _scrapState.value.store.name,
-                      _scrapState.value.src_image,
-            "")
+                      _currentProduct.value.currency,
+                      _currentProduct.value.product_id,
+                      _currentProduct.value.src_image_main,
+                      _currentProduct.value.url_refered)
 
 
 
