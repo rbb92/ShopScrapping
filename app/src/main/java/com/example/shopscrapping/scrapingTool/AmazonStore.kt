@@ -39,14 +39,14 @@ suspend fun AmazonFetcher(url: String): ScrapState =
 
         //make request
         try {
-            val response = androidClient.get(url)
+            Log.d("ablancom", "URL limpia 2: ${removerParametrosUrl(url)}")
+            val urlClean = removerParametrosUrl(url)
+            val response = androidClient.get(urlClean)
 
 //            response.headers.forEach { s, strings ->
 //                Log.d(s,strings.toString())
 //            }
 
-            Log.d("ablancom", "URL limpia 1: ${extraerDominio(url)}/dp/${extraerPathProducto(url)}")
-            Log.d("ablancom", "URL limpia 2: ${removerParametrosUrl(url)}")
 
             htmlDocument(response.bodyAsText())
             {
@@ -159,9 +159,10 @@ suspend fun AmazonFetcher(url: String): ScrapState =
                 val subProduct = mutableListOf<SubProduct>()
                 subProduct.add(product)
 
+                //TODO insertar referido Aliexpress aqui
                 ScrapState(
-                    url = url,
-                    url_refered = url,
+                    url = urlClean,
+                    url_refered = urlClean,
                     store = Store.AMAZON,
                     product = ScrapProduct(
                         title = title,

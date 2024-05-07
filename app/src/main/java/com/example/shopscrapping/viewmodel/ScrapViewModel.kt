@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.bbdd.ProductEntity
 import com.example.shopscrapping.bbdd.WorkEntity
+import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.CurrentProduct
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.ScrapWorkDescription
@@ -76,6 +77,7 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
                 store = _scrapState.value.store,
                 price = price,
                 currency = currency,
+                region = _scrapState.value.region,
                 globalMinPrice = minPrice,
                 title = title,
                 description = subTitle,
@@ -101,13 +103,13 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
 
     fun currentSubProduct() = _scrapState.value.product?.subProductSelected ?: 0
     //Corrutine scraping
-    fun scrapeUrl( url: String, store: Store){
+    fun scrapeUrl( url: String, store: Store, country: CountriesCode){
         viewModelScope.launch {
             Log.d("ablanco","preparando scrape")
 
             _scrapState.update { it.copy(isScrapping = true, isScrappingProcess = true) }
-            updateScrapeUIState(StoreFetcher(url,store)) //Se crea un nuevo ScrapeState //TODO quitar ALIEXPRESS hardcoding
-            _scrapState.update { it.copy(isScrappingProcess = true) }
+            updateScrapeUIState(StoreFetcher(url,store,country)) //Se crea un nuevo ScrapeState //TODO quitar ALIEXPRESS hardcoding
+            _scrapState.update { it.copy(isScrappingProcess = true, region = country) }
             updateCurrentProductUI()
 //            fetchAmazonStore(url)
 //            updateScrapeUIState(fetchAmazonStore(url))
@@ -152,6 +154,7 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
                       if(description.isAllPrices) _currentProduct.value.globalMinPrice ?: _currentProduct.value.price else _currentProduct.value.price,
                       _scrapState.value.store.name,
                       _currentProduct.value.currency,
+                      _currentProduct.value.region.name,
                       _currentProduct.value.product_id,
                       _currentProduct.value.src_image_main,
                       _currentProduct.value.url_refered)

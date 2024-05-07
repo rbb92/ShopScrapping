@@ -1,6 +1,8 @@
 package com.example.shopscrapping.ui.screens
 
 import android.util.Log
+import android.view.WindowManager
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,13 +11,17 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -55,12 +61,18 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.Store
+import com.example.shopscrapping.data.getDrawableFromCountryCode
 import com.example.shopscrapping.ui.theme.md_theme_light_primary
 import com.example.shopscrapping.ui.theme.md_theme_light_primaryContainer
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
@@ -77,13 +89,14 @@ fun ScrapingScreen(
 {
     val scrapUiState = scrapViewModel.scrapeState.collectAsState().value
 
-    val onButtonPress = { url: String, store:Store ->
+    val onButtonPress = { url: String, store:Store, country:CountriesCode ->
         Log.d("ablanco","boton pulsado")
-        scrapViewModel.scrapeUrl(url,store)
+        scrapViewModel.scrapeUrl(url, store, country)
     }
 
     var urlText by remember { mutableStateOf("") }
     var currentStore by remember { mutableStateOf(Store.NULL) }
+    var currentCountry by remember { mutableStateOf(CountriesCode.ES) }
 //    var isScrappingProcess by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -127,7 +140,7 @@ fun ScrapingScreen(
                                        currentStore
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { if (currentStore != Store.NULL) onButtonPress(urlText,currentStore) }),
+                keyboardActions = KeyboardActions(onDone = { if (currentStore != Store.NULL) onButtonPress(urlText,currentStore,currentCountry) }),
                 maxLines = 5,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +150,7 @@ fun ScrapingScreen(
 
             ElevatedButton(
                 onClick = {
-                    onButtonPress(urlText,currentStore)
+                    onButtonPress(urlText,currentStore,currentCountry)
 
                     scrapViewModel.inScrapingState()
                 },
@@ -155,12 +168,15 @@ fun ScrapingScreen(
                 enabled = currentStore != Store.NULL
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(44.dp))
 
             StoreMenu({ currentStore = it},currentStore, modifier)
 //            Spacer(modifier = Modifier.height(14.dp))
 //
 //            StoreDropdownMenu({ currentStore = it},currentStore)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            CountryMenu({ currentCountry = it},currentCountry, modifier)
 
             if(scrapUiState.isError)
             {
@@ -229,10 +245,11 @@ fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifie
 
     Column {
 
-        Row(modifier = Modifier.clickable { expanded = true }
-                                .fillMaxWidth(0.6f)
-                                .background(MaterialTheme.colorScheme.background)
-                                .border(2.dp, Color.Black,RoundedCornerShape(8.dp)),
+        Row(modifier = Modifier
+            .clickable { expanded = true }
+            .fillMaxWidth(0.6f)
+            .background(MaterialTheme.colorScheme.background)
+            .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
             horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
                 text = if (currentStore != Store.NULL) currentStore.name else "Selecciona tienda",
@@ -266,59 +283,63 @@ fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifie
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun menuStores() {
-    val storeNames = Store.values()
-        .filter { it != Store.NULL }
-        .map { it.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() } }
-        .toTypedArray()
-
+fun CountryMenu(updateStore: (CountriesCode)->Unit, currentCountry: CountriesCode, modifier: Modifier) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
+//    var currentStore by remember { mutableStateOf(Store.NULL) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(32.dp)
-    ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedText,
-                onValueChange = { selectedText = it },
-                label = { Text(text = "Store") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
+    val storeItems = CountriesCode.values()
+
+    Column {
+
+        Row(modifier = Modifier
+            .clickable { expanded = true }
+            .fillMaxWidth(0.4f)
+            .background(MaterialTheme.colorScheme.background)
+            .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = currentCountry.name ,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+//                    .align(Alignment.CenterStart),
+//                style = MaterialTheme.typography.bodyMedium,
             )
-
-            val filteredOptions =
-                storeNames.filter { it.contains(selectedText, ignoreCase = true) }
-            if (filteredOptions.isNotEmpty()) {
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = {
-                        // We shouldn't hide the menu when the user enters/removes any character
-                    }
-                ) {
-                    filteredOptions.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(text = item) },
-                            onClick = {
-                                selectedText = item
-                                expanded = false
-                            }
-                        )
-                    }
-                }
+            Image(painterResource(getDrawableFromCountryCode(currentCountry)),"")
+            IconButton(
+                onClick = { expanded = true },
+//                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
             }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier,
+        ) {
+            storeItems.forEach { country ->
+                DropdownMenuItem(onClick = {
+                    updateStore(country)
+                    expanded = false
+                },
+                    text = {
+                            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = country.name)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Image(painterResource(getDrawableFromCountryCode(country)),"")}
+                            }
+                            )
+
+            }
+
         }
     }
 }
+
+
 
 
 @Preview(showSystemUi = true)

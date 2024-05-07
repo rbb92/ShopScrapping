@@ -20,13 +20,13 @@ class WorkManagerScrapRepository(context: Context) : ScrapWorkRepository {
         data.putBoolean(UrlScrappingWorker.STOCK_ALERT, description.isStock)
         data.putFloat(UrlScrappingWorker.PRICE_ALERT, description.priceLimit)
         data.putString(UrlScrappingWorker.STORE, description.store.name)
+        data.putString(UrlScrappingWorker.REGION, description.region.name)
 
 
         val workRequestBuilder = PeriodicWorkRequestBuilder<UrlScrappingWorker>(description.period.minutes,TimeUnit.MINUTES)
             .setInputData(data.build())
             .build()
 
-        //TODO -> Generar UUID para el work  y almacenarlo en una bbdd local, de momento usando URL como id del work.
         Log.d("ablancom","Valor de UUID asociado: ${description.uUID}")
         workManager.enqueueUniquePeriodicWork(
             description.uUID,
@@ -36,5 +36,6 @@ class WorkManagerScrapRepository(context: Context) : ScrapWorkRepository {
 
     override fun deleteWork(uuidWork: String) {
         workManager.cancelUniqueWork(uuidWork)
+
     }
 }

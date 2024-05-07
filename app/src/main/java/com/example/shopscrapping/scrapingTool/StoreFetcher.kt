@@ -1,13 +1,14 @@
 package com.example.shopscrapping.scrapingTool
 
+import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.Store
 
-suspend fun StoreFetcher (url: String, store:Store): ScrapState =
+suspend fun StoreFetcher (url: String, store:Store,country: CountriesCode): ScrapState =
     when (store)
     {
         Store.AMAZON -> AmazonFetcher(url)
-        Store.ALIEXPRESS -> AliexpressFetcher(url) //TODO aliexpress store
+        Store.ALIEXPRESS -> AliexpressFetcher(url, country) //TODO aliexpress store
         else -> AmazonFetcher(url)
 
     }

@@ -8,6 +8,7 @@ data class CurrentProduct(
     val currency: String = "EUR",
     val globalMinPrice: Float? = null,
     val title: String = "",
+    val region: CountriesCode = CountriesCode.ES,
     val description: String = "",
     val src_image_main: String = "",
     val src_image_sec: String? = "",
@@ -19,6 +20,7 @@ data class ScrapState(
     val url: String = "",       //todos los subproductos estaran en la misma url
     val url_refered: String = "",
     val store: Store = Store.AMAZON,
+    val region: CountriesCode = CountriesCode.ES,
     var product: ScrapProduct? = null,
     val isScrapping: Boolean = false,
     val isError: Boolean = false,

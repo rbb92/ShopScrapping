@@ -375,6 +375,7 @@ fun ScrapingDetailScreen(
                             val workDescription = ScrapWorkDescription("",
                                 scrapUiState.url,
                                 scrapUiState.store,
+                                scrapUiState.region,
                                 inStockOption,
                                 inAllProducts,
                                 priceLimit.toFloatOrNull()?:0.0f,

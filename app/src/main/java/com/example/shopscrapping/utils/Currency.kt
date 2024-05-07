@@ -6,7 +6,7 @@ fun currencyToString(currency: String): String{
         "EUR" -> "€"
         "USD" -> "$"
         "GBP" -> "£"
-        else -> ""
+        else -> currency.take(4)
 
     }
 }

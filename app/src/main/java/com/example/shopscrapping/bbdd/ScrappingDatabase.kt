@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [ProductEntity::class,WorkEntity::class], version = 7, exportSchema = true)
+@Database(entities = [ProductEntity::class,WorkEntity::class], version = 8, exportSchema = true)
 abstract class ScrappingDatabase: RoomDatabase() {
     abstract fun workDao(): WorkDao
     abstract fun productDao(): ProductDao
@@ -36,13 +36,10 @@ abstract class ScrappingDatabase: RoomDatabase() {
 
 //Para migrar de version X a Y especificar los cambios de las tablas aqui para evitar que se borren. Indicar bien las
 //Versiones en Migration(,)!!
-val MIGRATION_6_7 = object : Migration(6, 7) {
+val MIGRATION_6_7 = object : Migration(7, 8) {
     override fun migrate(database: SupportSQLiteDatabase) {
         // Aquí puedes escribir el SQL necesario para migrar los datos
         // Si solo estás añadiendo una nueva columna, puedes utilizar algo como:
-        database.execSQL("ALTER TABLE Work ADD COLUMN fechaUltimaBusqueda INTEGER DEFAULT 0")
-        database.execSQL("ALTER TABLE Product ADD COLUMN moneda TEXT DEFAULT 'EUR'")
-        database.execSQL("ALTER TABLE Product ADD COLUMN productId TEXT DEFAULT ''")
-        database.execSQL("ALTER TABLE Work DROP COLUMN talla")
+        database.execSQL("ALTER TABLE Product ADD COLUMN region TEXT DEFAULT 'ES'")
     }
 }

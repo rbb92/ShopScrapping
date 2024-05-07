@@ -4,6 +4,7 @@ data class ScrapWorkDescription(
     var uUID: String = "",
     val url: String,
     val store: Store,
+    val region: CountriesCode,
     val isStock: Boolean,
     val isAllPrices: Boolean,
     val priceLimit: Float,

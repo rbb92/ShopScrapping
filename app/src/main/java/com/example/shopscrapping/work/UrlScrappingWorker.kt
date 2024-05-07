@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.bbdd.ScrappingDatabase
+import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.scrapingTool.StoreFetcher
@@ -33,6 +34,7 @@ class UrlScrappingWorker(
     override suspend fun doWork(): Result {
         val url = inputData.getString(URL)?:""
         val store: Store = Store.valueOf(inputData.getString(STORE)?: Store.AMAZON.name)
+        val region: CountriesCode = CountriesCode.valueOf(inputData.getString(REGION)?: CountriesCode.ES.name)
 
 
 
@@ -52,7 +54,7 @@ class UrlScrappingWorker(
         withContext(Dispatchers.IO){
 //        CoroutineScope(Dispatchers.IO).launch {
             Log.d("ablancom","antes de scrapear en work")
-            scrapState = StoreFetcher(url, store)
+            scrapState = StoreFetcher(url, store, region)
             Log.d("ablancom","despues de scrapear en work")
         }
 
@@ -90,7 +92,7 @@ class UrlScrappingWorker(
             val subProducts = scrapState.product!!.subProduct
             Log.d("ablanco1","Hay subproductos!!: ${productId}, la lista es: ${subProducts} ")
             subProducts.forEach{
-                if(it.identifier == productId) //TODO -> identifier o reference??
+                if(it.identifier == productId) // identifier usar o reference??
                 {
                     price = it.price
                     globalMinPrice = it.globalMinPrice?: 0.0f
@@ -169,6 +171,7 @@ class UrlScrappingWorker(
         const val URL = "URL"
         const val UUID = "UUID"
         const val STORE = "STORE"
+        const val REGION = "REGION"
         const val STOCK_ALERT = "STOCK_ALERT"
         const val PRICE_ALERT = "PRICE_ALERT"
     }
