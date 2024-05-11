@@ -90,7 +90,7 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
         }
     }
     fun secundaryGoal(scrapItem: ScrapedItem ):Boolean  {
-        if(scrapItem.initialPrice > scrapItem.currentPrice)
+        if((scrapItem.initialPrice > scrapItem.currentPrice) and (scrapItem.currentPrice > 0.0f))
             return true
         return false
     }

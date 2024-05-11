@@ -1,5 +1,6 @@
 package com.example.shopscrapping
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,9 +25,11 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface{
                     val windowSize = calculateWindowSizeClass(this)
+                    val activity: Activity = this
                     ShopScrappingApp(
                         context = applicationContext,
                         windowSize = windowSize.widthSizeClass,
+                        activity = activity
                     )
                 }
             }

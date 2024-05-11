@@ -55,6 +55,7 @@ android {
 
 dependencies {
     implementation("com.google.android.engage:engage-core:1.3.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     val ktor_version = "2.3.7"
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -87,6 +88,9 @@ dependencies {
 
     //Json parser
     implementation("com.beust:klaxon:5.5")
+
+    //Spotlight
+    implementation("com.github.takusemba:spotlight:2.0.5")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-apache:$ktor_version")

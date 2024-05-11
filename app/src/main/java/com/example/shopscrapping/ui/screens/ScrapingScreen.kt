@@ -1,5 +1,6 @@
 package com.example.shopscrapping.ui.screens
 
+import android.app.Activity
 import android.util.Log
 import android.view.WindowManager
 import androidx.compose.foundation.Image
@@ -84,7 +85,8 @@ import com.example.shopscrapping.viewmodel.ScrapViewModel
 fun ScrapingScreen(
     modifier: Modifier,
     scrapViewModel: ScrapViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    activity: Activity
 )
 {
     val scrapUiState = scrapViewModel.scrapeState.collectAsState().value
@@ -221,6 +223,7 @@ fun ScrapingScreen(
 
                         },
                         { homeViewModel.productAdded() },
+                        activity = activity,
                         modifier = modifier.weight(1f,false)
                     )
                 }

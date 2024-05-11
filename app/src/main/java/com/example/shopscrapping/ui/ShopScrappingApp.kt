@@ -1,5 +1,6 @@
 package com.example.shopscrapping.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -23,6 +24,7 @@ import com.example.shopscrapping.viewmodel.ScrapViewModel
 fun ShopScrappingApp(
     context: Context,
     windowSize: WindowWidthSizeClass,
+    activity: Activity,
     modifier: Modifier = Modifier,
 ) {
 
@@ -45,6 +47,7 @@ fun ShopScrappingApp(
 
 
     ScrappingHomeContent(
+        activity = activity,
         modifier = modifier
     )
 }

@@ -8,4 +8,7 @@
     <color name="green_increase">#328C12</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="spotlightBackground">#BF000000</color>
+    <color name="spotlightBackground2">#D9000000</color>
 </resources>

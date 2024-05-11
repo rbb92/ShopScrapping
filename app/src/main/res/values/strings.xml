@@ -3,4 +3,6 @@
     <string name="tab_scrapping">Scrap</string>
     <string name="tab_list_scrapping">List of Scraps</string>
     <string name="tab_list_settings">Settings</string>
+    <string name="next_target">Siguiente</string>
+    <string name="close_spotlight">Saltar tutorial</string>
 </resources>

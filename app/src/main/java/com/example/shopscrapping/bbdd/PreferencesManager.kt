@@ -46,4 +46,11 @@ class PreferencesManager(context: Context) {
     fun setOnlyWifi(enabled:Boolean) = saveBoolean("wifi_mode",enabled)
     fun isSecundaryNotificationsDisabled() = getBoolean("secundary_notifications_disabled")
     fun setSecundaryNotificationsDisabled(disabled:Boolean) = saveBoolean("secundary_notifications_disabled",disabled)
+
+    fun isMainTutorialCompleted() = getBoolean("main_tutorial")
+    fun mainTutorialCompleted() = saveBoolean("main_tutorial",true)
+    fun enableMainTutorial() = saveBoolean("main_tutorial",false)
+    fun isScrapScreenTutorialCompleted() = getBoolean("scrap_screen_tutorial")
+    fun scrapScreenTutorialCompleted() = saveBoolean("scrap_screen_tutorial",true)
+    fun enableScrapScreenTutorial() = saveBoolean("scrap_screen_tutorial",false)
 }

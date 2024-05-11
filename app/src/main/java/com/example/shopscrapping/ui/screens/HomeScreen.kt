@@ -1,72 +1,85 @@
 package com.example.shopscrapping.ui.screens
 
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Color.argb
+import android.graphics.Point
+import android.graphics.PointF
 import android.util.Log
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
-
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
-
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 import com.example.shopscrapping.R
 import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.data.HomeUIState
 import com.example.shopscrapping.data.TabsTypes
+import com.example.shopscrapping.ui.tutorial.ListScrapTabTarget
+import com.example.shopscrapping.ui.tutorial.PresentationTarget
+import com.example.shopscrapping.ui.tutorial.ScrapTabTarget
+import com.example.shopscrapping.ui.tutorial.SearchStoreTarget
+import com.example.shopscrapping.ui.tutorial.SearchUrlTarget
+import com.example.shopscrapping.ui.tutorial.SelectStoreTarget
+import com.example.shopscrapping.ui.tutorial.SettingTabTarget
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.HomeViewModel
-import com.example.shopscrapping.viewmodel.ScrapViewModel
+import com.takusemba.spotlight.OnSpotlightListener
+import com.takusemba.spotlight.OnTargetListener
+import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.Target
+import com.takusemba.spotlight.effet.FlickerEffect
+import com.takusemba.spotlight.effet.RippleEffect
+import com.takusemba.spotlight.shape.Circle
+import com.takusemba.spotlight.shape.RoundedRectangle
 
 
 @Composable
 fun ScrappingHomeContent(
+    activity: Activity,
     modifier: Modifier,
     homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val homeUiState = homeViewModel.homeUIState.collectAsState().value
 
     var tabSelection by remember { mutableStateOf( TabsTypes.ScrapScreen) }
+    var tutorialActivated by remember { mutableStateOf( false) }
 
     Log.d("ablancom","por HomeScreen")
 
@@ -105,7 +118,8 @@ fun ScrappingHomeContent(
                             .padding(
                                 horizontal = 16.dp
                             ),
-                        homeViewModel = homeViewModel
+                        homeViewModel = homeViewModel,
+                        activity = activity
                     )
                     TabsTypes.ScrapListScreen -> ScrapingListScreen( modifier =
                     Modifier
@@ -113,7 +127,10 @@ fun ScrappingHomeContent(
                         .padding(
                             horizontal = 16.dp
                         ))
-                    TabsTypes.Screen3 -> SettingsScreen( modifier = Modifier
+                    TabsTypes.Screen3 -> SettingsScreen( onStartTutorial = {
+                        tabSelection = TabsTypes.ScrapScreen
+                    },
+                        modifier = Modifier
                         .weight(1f)
                         .padding(
                             horizontal = 16.dp
@@ -137,6 +154,90 @@ fun ScrappingHomeContent(
                 }
             }
     }
+
+    if(!tutorialActivated and !PreferencesManager(LocalContext.current).isMainTutorialCompleted())
+    {
+        tutorialActivated = true
+        LaunchGlobalTutorial(context = LocalContext.current , activity = activity)
+        PreferencesManager(LocalContext.current).mainTutorialCompleted()
+
+    }
+
+
+}
+
+@Composable
+fun LaunchGlobalTutorial(context: Context, activity: Activity) {
+    val targets = ArrayList<Target>()
+    val display = activity.windowManager.defaultDisplay
+    val size = Point()
+    display.getSize(size)
+    val screenWidth = size.x
+    val screenHeight = size.y
+
+
+    //---- Start create Targets
+
+    val firstRoot = FrameLayout(context)
+    val intro = activity.layoutInflater.inflate(R.layout.introduction_layer, firstRoot)
+    targets.add(PresentationTarget(intro))
+
+
+    val secondRoot = FrameLayout(context)
+    val searchTip = activity.layoutInflater.inflate(R.layout.layout_target, secondRoot)
+    targets.add(SearchUrlTarget(searchTip,screenWidth,screenHeight))
+
+
+    targets.add(SelectStoreTarget(searchTip,screenWidth,screenHeight))
+
+
+    targets.add(SearchStoreTarget(searchTip,screenWidth,screenHeight))
+
+
+    val thirdRoot = FrameLayout(context)
+    val tabsTip = activity.layoutInflater.inflate(R.layout.tabs_target, thirdRoot)
+    targets.add(ScrapTabTarget(tabsTip,screenWidth,screenHeight))
+
+
+    targets.add(ListScrapTabTarget(tabsTip,screenWidth,screenHeight))
+
+
+    targets.add(SettingTabTarget(tabsTip,screenWidth,screenHeight))
+
+    //---- End create Targets
+
+
+    val spotlight = Spotlight.Builder(activity)
+        .setTargets(targets)
+        .setBackgroundColorRes(R.color.spotlightBackground)
+        .setDuration(500L)
+        .setAnimation(DecelerateInterpolator(2f))
+        .setOnSpotlightListener(object : OnSpotlightListener {
+            override fun onStarted() {
+
+                Log.d("Spotlight","Inicio Spotlight")
+            }
+
+            override fun onEnded() {
+
+                Log.d("Spotlight","Fiin Spotlight")
+            }
+        })
+        .build()
+
+    spotlight.start()
+
+    val nextTarget = View.OnClickListener { spotlight.next() }
+
+    val closeSpotlight = View.OnClickListener { spotlight.finish() }
+
+    intro.findViewById<View>(R.id.close_target).setOnClickListener(nextTarget)
+    searchTip.findViewById<View>(R.id.close_target).setOnClickListener(nextTarget)
+    tabsTip.findViewById<View>(R.id.close_target).setOnClickListener(nextTarget)
+
+    intro.findViewById<View>(R.id.close_spotlight).setOnClickListener(closeSpotlight)
+    searchTip.findViewById<View>(R.id.close_spotlight).setOnClickListener(closeSpotlight)
+    tabsTip.findViewById<View>(R.id.close_spotlight).setOnClickListener(closeSpotlight)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -231,11 +332,11 @@ private data class NavigationItemContent(
 )
 
 
-@Composable
-@Preview
-fun TestHomeGui()
-{
-    ScrappingHomeContent(
-        modifier = Modifier
-    )
-}
+//@Composable
+//@Preview
+//fun TestHomeGui()
+//{
+//    ScrappingHomeContent(
+//        modifier = Modifier
+//    )
+//}

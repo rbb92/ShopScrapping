@@ -58,6 +58,11 @@ class SettingsViewModel (application: Application) : AndroidViewModel(applicatio
         Log.d("ablancom","preferencesManager.isSecundaryNotificationsDisabled() ${preferencesManager.isSecundaryNotificationsDisabled()}")
     }
 
+    fun enableTutorials()
+    {
+        preferencesManager.enableMainTutorial()
+        preferencesManager.enableScrapScreenTutorial()
+    }
 
 
 

@@ -1,6 +1,7 @@
 package com.example.shopscrapping.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import com.example.shopscrapping.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
+    onStartTutorial: () -> Unit,
     modifier: Modifier,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 )
@@ -42,7 +44,13 @@ fun SettingsScreen(
                    action = {disabled -> settingsViewModel.updateisSecundaryNotificationsDisabled(disabled)})
         Spacer(modifier = Modifier.size(9.dp))
         Divider(thickness = 4.dp)
+        Spacer(modifier = Modifier.size(18.dp))
+        Text("Ver tutorial",modifier = Modifier.clickable {
+            settingsViewModel.enableTutorials()
+            onStartTutorial()
+        })
         Spacer(modifier = Modifier.size(9.dp))
+        Divider(thickness = 4.dp)
     }
 }
 

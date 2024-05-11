@@ -112,6 +112,8 @@ fun ScrapingListScreen(
         is ScrapListState.Empty -> EmptyScrapListScreen(modifier = modifier.fillMaxSize())
         is ScrapListState.Success -> LoadedScrapListScreen(modifier = modifier.fillMaxSize(),scrapListViewModel,
             (scrapListViewModel.scrapListState as ScrapListState.Success).items)
+
+        else -> LoadingScrapListScreen(modifier = modifier.fillMaxSize())
     }
 
 }

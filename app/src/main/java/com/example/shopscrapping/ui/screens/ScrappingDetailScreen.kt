@@ -1,6 +1,12 @@
 package com.example.shopscrapping.ui.screens
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Point
 import android.util.Log
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -60,6 +66,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.shopscrapping.R
+import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.data.Period
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.ScrapWorkDescription
@@ -70,10 +78,21 @@ import com.example.shopscrapping.ui.theme.md_theme_light_onPrimaryContainer
 import com.example.shopscrapping.ui.theme.md_theme_light_onSurface
 import com.example.shopscrapping.ui.theme.md_theme_light_primary
 import com.example.shopscrapping.ui.theme.md_theme_light_tertiaryContainer
+import com.example.shopscrapping.ui.tutorial.ListScrapTabTarget
+import com.example.shopscrapping.ui.tutorial.PresentationTarget
+import com.example.shopscrapping.ui.tutorial.ScrapScreenTarget
+import com.example.shopscrapping.ui.tutorial.ScrapTabTarget
+import com.example.shopscrapping.ui.tutorial.SearchStoreTarget
+import com.example.shopscrapping.ui.tutorial.SearchUrlTarget
+import com.example.shopscrapping.ui.tutorial.SelectStoreTarget
+import com.example.shopscrapping.ui.tutorial.SettingTabTarget
 import com.example.shopscrapping.utils.currencyToString
 import com.example.shopscrapping.utils.priceToFloat
 import com.example.shopscrapping.viewmodel.ScrapViewModel
 import com.google.accompanist.coil.rememberCoilPainter
+import com.takusemba.spotlight.OnSpotlightListener
+import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.Target
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +102,7 @@ fun ScrapingDetailScreen(
     scrapViewModel: ScrapViewModel,
     goBack: ()->Unit,
     newProduct: ()->Unit,
+    activity: Activity,
     modifier: Modifier
 )
 {
@@ -98,6 +118,9 @@ fun ScrapingDetailScreen(
 
     val currentContext = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+
+    var tutorialActivated by remember { mutableStateOf( false) }
 
     Log.d("ScrappingDetailScreen","Redrawing!")
     Column (verticalArrangement= Arrangement.SpaceBetween,
@@ -407,6 +430,14 @@ fun ScrapingDetailScreen(
             Spacer(modifier = Modifier.height(36.dp))
         }
     }
+
+
+    if(!tutorialActivated and !PreferencesManager(LocalContext.current).isScrapScreenTutorialCompleted())
+    {
+        tutorialActivated = true
+        LaunchScrappingScreenTutorial(context = LocalContext.current , activity = activity)
+        PreferencesManager(LocalContext.current).scrapScreenTutorialCompleted()
+    }
 }
 
 @Composable
@@ -451,4 +482,46 @@ fun trimUntilFirstLetterOrNumber(input: String): String {
     } else {
         ""
     }
+}
+
+fun LaunchScrappingScreenTutorial(context: Context, activity: Activity) {
+    val targets = ArrayList<Target>()
+
+
+    //---- Start create Targets
+
+    val firstRoot = FrameLayout(context)
+    val intro = activity.layoutInflater.inflate(R.layout.introduction_layer, firstRoot)
+    targets.add(ScrapScreenTarget(intro))
+
+    //---- End create Targets
+
+
+    val spotlight = Spotlight.Builder(activity)
+        .setTargets(targets)
+        .setBackgroundColorRes(R.color.spotlightBackground2)
+        .setDuration(500L)
+        .setAnimation(DecelerateInterpolator(2f))
+        .setOnSpotlightListener(object : OnSpotlightListener {
+            override fun onStarted() {
+
+                Log.d("Spotlight","Inicio Spotlight")
+            }
+
+            override fun onEnded() {
+
+                Log.d("Spotlight","Fiin Spotlight")
+            }
+        })
+        .build()
+
+    spotlight.start()
+
+    val nextTarget = View.OnClickListener { spotlight.next() }
+
+    val closeSpotlight = View.OnClickListener { spotlight.finish() }
+
+    intro.findViewById<View>(R.id.close_target).setOnClickListener(nextTarget)
+
+    intro.findViewById<View>(R.id.close_spotlight).setOnClickListener(closeSpotlight)
 }
