@@ -63,6 +63,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.shopscrapping.R
 import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.data.getDrawableFromCountryCode
@@ -130,7 +132,7 @@ fun ScrapingScreen(
                 shape = MaterialTheme.shapes.large,
                 placeholder = {
                     Text(
-                        text = "Introduce la url...",
+                        text = stringResource(R.string.tab_scrapping_field_placeholder),
                         style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
                     )
                 },
@@ -159,7 +161,7 @@ fun ScrapingScreen(
                 content = {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Buscar",
+                        contentDescription = "Search",
                         modifier = Modifier.size(48.dp)
 
                     )
@@ -183,7 +185,7 @@ fun ScrapingScreen(
             if(scrapUiState.isError)
             {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Hubo un error")
+                Text(stringResource(R.string.tab_scrapping_search_error))
             }
         }
         else
@@ -199,7 +201,7 @@ fun ScrapingScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(modifier= Modifier.size(124.dp))
-                    Text(text = "Buscando...")
+                    Text(text = stringResource(R.string.tab_scrapping_searching))
                 }
 
 
@@ -255,7 +257,7 @@ fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifie
             .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
             horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
-                text = if (currentStore != Store.NULL) currentStore.name else "Selecciona tienda",
+                text = if (currentStore != Store.NULL) currentStore.name else stringResource(R.string.tab_scrapping_choose_store),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
 //                    .align(Alignment.CenterStart),

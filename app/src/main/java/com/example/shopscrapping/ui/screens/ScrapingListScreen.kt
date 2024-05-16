@@ -144,7 +144,6 @@ fun LoadedScrapListScreen(
         }
 
     }
-    //TODO quitar efecto scroll, no me convence, y poner un boton de actualizar
 //    LaunchedEffect(listState.isScrollInProgress) {
 //        Log.d("ablancom","paso 0 ${listState.firstVisibleItemScrollOffset}")
 //
@@ -333,7 +332,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        text = "Precio inicial",
+                        text = stringResource(id = R.string.tab_list_scrapping_initial_price),
                         style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(modifier = Modifier)
@@ -349,7 +348,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Text(
                         modifier = Modifier.padding(bottom = 16.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        text = "Precio actual",
+                        text = stringResource(id = R.string.tab_list_scrapping_current_price),
                         style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(modifier = Modifier)
@@ -394,7 +393,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp, top = 6.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        text = "Se añadió en",
+                        text = stringResource(id = R.string.tab_list_scrapping_added_at),
                         style = MaterialTheme.typography.labelMedium
                     )
                     Spacer(modifier = Modifier)
@@ -412,7 +411,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        text = "Periodo de busqueda",
+                        text = stringResource(id = R.string.tab_list_scrapping_search_period),
                         style = MaterialTheme.typography.labelMedium
                     )
                     Spacer(modifier = Modifier)
@@ -430,7 +429,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                     Text(
                         modifier = Modifier.padding(bottom = 6.dp),
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        text = "Numero de busquedas",
+                        text = stringResource(id = R.string.tab_list_scrapping_search_number),
                         style = MaterialTheme.typography.labelMedium
                     )
                     Spacer(modifier = Modifier)
@@ -451,7 +450,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Text(
                             modifier = Modifier.padding(bottom = 6.dp),
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            text = "Ultima busqueda",
+                            text = stringResource(id = R.string.tab_list_scrapping_latest_search),
                             style = MaterialTheme.typography.labelMedium
                         )
                         Spacer(modifier = Modifier)
@@ -477,7 +476,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Text(
                             modifier = Modifier.padding(top = 6.dp, start = 30.dp),
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            text = "Avisar cuando producto esté disponible",
+                            text = stringResource(id = R.string.tab_list_scrapping_alert_stock),
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -485,7 +484,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                         Text(
                             modifier = Modifier.padding(top = 6.dp, start = 30.dp),
                             fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            text = "Avisar cuando precio sea inferior a ${scrapItem.limitPrice} ${scrapItem.currency}",
+                            text = stringResource(id = R.string.tab_list_scrapping_alert_price, scrapItem.limitPrice ,scrapItem.currency),
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -535,19 +534,19 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
             if (showRemoveDialog) {
                 AlertDialog(
                     onDismissRequest = { showRemoveDialog = false},
-                    title = {Text("Borrar producto")},
-                    text = {Text("¿Estás seguro de que deseas borrar el producto de la lista?")},
+                    title = {Text(stringResource(id = R.string.tab_list_scrapping_remove_dialog_title))},
+                    text = {Text(stringResource(id = R.string.tab_list_scrapping_remove_dialog_text))},
                     confirmButton = {
                         Button(
                             onClick = {
                                 scrapListViewModel.removeWork(scrapItem.uuid)
                                 scrapListViewModel.getScrapList()
-                                showToast(currentContext, "Producto eliminado de la lista \uD83D\uDDD1️")
+                                showToast(currentContext, currentContext.getString(R.string.tab_list_scrapping_remove_dialog_removed))
                                 showRemoveDialog = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text("Sí")
+                            Text(stringResource(id = R.string.tab_list_scrapping_remove_dialog_yes))
                         }
                     },
                     dismissButton = {
@@ -556,7 +555,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
                                 showRemoveDialog = false
                             }
                         ) {
-                            Text("No")
+                            Text(stringResource(id = R.string.tab_list_scrapping_remove_dialog_no))
                         }
                     }
                 )
@@ -582,7 +581,7 @@ fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float, currenc
         if (currentPrice == 0.0f)
         {
             Text(
-                    text = "No disponible",
+                    text = stringResource(id = R.string.tab_list_scrapping_not_available),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
         }
@@ -672,7 +671,7 @@ fun FullImage(url_img: String, modifier: Modifier) {
 @Composable
 fun EmptyScrapListScreen(modifier: Modifier) {
     Column (modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-        Text(text = "Ups, no has añadido ningún producto todavía \uD83D\uDE1F")
+        Text(text = stringResource(id = R.string.tab_list_scrapping_empty_screen))
     }
 }
 
@@ -686,7 +685,7 @@ fun LoadingScrapListScreen(modifier: Modifier) {
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(modifier= Modifier.size(124.dp))
-            Text(text = "Buscando...")
+            Text(text = stringResource(id = R.string.tab_scrapping_searching))
         }
     }
 }

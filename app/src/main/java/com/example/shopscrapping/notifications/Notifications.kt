@@ -60,7 +60,7 @@ fun notificationTest(context: Context, title: String, message: String,url: Strin
         .setCustomContentView(notificationLayout)
         .setCustomBigContentView(notificationLayoutExpanded)
         .setPriority(NotificationCompat.PRIORITY_MAX)
-        .addAction(android.R.drawable.btn_star_big_on , "\uD83D\uDED2 Comprar", pendingIntent)
+        .addAction(android.R.drawable.btn_star_big_on , context.getString(R.string.notification_buy_button), pendingIntent)
 
 
 
@@ -104,11 +104,10 @@ fun notificationProductAdded(context: Context, message: String) {
         notificationManager.createNotificationChannel(channel)
     }
 
-    val title = "✅ Nuevo producto añadido"
     // Crear la notificación
     val builder = NotificationCompat.Builder(context, "mi_canal_id")
         .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle(title)
+        .setContentTitle(context.getString(R.string.notification_product_added_title))
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_MAX)
 
@@ -158,14 +157,13 @@ fun notificationGoal(context: Context, message: String, title_header: String, ur
         notificationManager.createNotificationChannel(channel)
     }
 
-    val title = "\uD83C\uDF89 HURRAY! ${title_header}"
     val notificationLayout = RemoteViews(context.packageName, R.layout.small_notification)
-    notificationLayout.setTextViewText(R.id.notification_title,title)
+    notificationLayout.setTextViewText(R.id.notification_title,title_header)
     val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.expanded_notification)
     val bitmap = BitmapFactory.decodeStream(URL(url_img).openStream())
     notificationLayoutExpanded.setImageViewBitmap(R.id.product_image,bitmap)
     notificationLayout.setImageViewBitmap(R.id.product_image,bitmap)
-    notificationLayoutExpanded.setTextViewText(R.id.notification_title,title)
+    notificationLayoutExpanded.setTextViewText(R.id.notification_title,title_header)
     notificationLayoutExpanded.setTextViewText(R.id.product_title,message)
     notificationLayoutExpanded.setTextViewText(R.id.product_price,price)
     notificationLayoutExpanded.setOnClickPendingIntent(R.id.button,pendingIntent)
@@ -175,7 +173,7 @@ fun notificationGoal(context: Context, message: String, title_header: String, ur
     val builder = NotificationCompat.Builder(context, "mainGoal")
         .setSmallIcon(android.R.drawable.btn_star_big_on)
 //        .setContentTitle(title)
-        .addAction(android.R.drawable.btn_star_big_on , "\uD83D\uDED2 Comprar", pendingIntent)
+        .addAction(android.R.drawable.btn_star_big_on , context.getString(R.string.notification_buy_button), pendingIntent)
         .setCustomContentView(notificationLayout)
         .setCustomBigContentView(notificationLayoutExpanded)
         .setPriority(NotificationCompat.PRIORITY_MAX)

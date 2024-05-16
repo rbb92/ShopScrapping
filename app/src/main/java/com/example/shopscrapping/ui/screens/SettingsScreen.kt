@@ -15,8 +15,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.shopscrapping.R
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.ScrapListViewModel
 import com.example.shopscrapping.viewmodel.SettingsViewModel
@@ -33,21 +35,22 @@ fun SettingsScreen(
     val prueba:(Boolean) -> Unit ={ isChecked -> Log.d("ablancom","nuevo valor de boolean1: ${isChecked}")}
     Column (modifier = modifier) {
         Spacer(modifier = Modifier.size(18.dp))
-        SettingRow(name="Solo Wifi",
+        SettingRow(name= stringResource(id = R.string.tab_list_settings_only_wifi),
                    checked = settingsUIState.isWifiOnly,
                    action = {disabled -> settingsViewModel.updateIsWifi(disabled)})
         Spacer(modifier = Modifier.size(9.dp))
         Divider(thickness = 4.dp)
         Spacer(modifier = Modifier.size(9.dp))
-        SettingRow(name="Deshabilitar notificaciones secundarias",
+        SettingRow(name= stringResource(id = R.string.tab_list_settings_disable_notifications),
                    checked = settingsUIState.isSecundaryNotificationsDisabled,
                    action = {disabled -> settingsViewModel.updateisSecundaryNotificationsDisabled(disabled)})
         Spacer(modifier = Modifier.size(9.dp))
         Divider(thickness = 4.dp)
         Spacer(modifier = Modifier.size(18.dp))
-        Text("Ver tutorial",modifier = Modifier.clickable {
-            settingsViewModel.enableTutorials()
-            onStartTutorial()
+        Text(stringResource(id = R.string.tab_list_settings_enable_tutorial),
+            modifier = Modifier.clickable {
+                settingsViewModel.enableTutorials()
+                onStartTutorial()
         })
         Spacer(modifier = Modifier.size(9.dp))
         Divider(thickness = 4.dp)

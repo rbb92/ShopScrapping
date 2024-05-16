@@ -17,11 +17,11 @@ import com.takusemba.spotlight.shape.Circle
 import com.takusemba.spotlight.shape.RoundedRectangle
 
 
-fun PresentationTarget(intro: View): Target = Target.Builder()
+fun PresentationTarget(intro: View, context: Context): Target = Target.Builder()
         .setOverlay(intro)
         .setOnTargetListener(object : OnTargetListener {
             override fun onStarted() {
-                intro.findViewById<TextView>(R.id.Spotlight_text).setText("Bienvenidos a Price Watcher!! \uD83D\uDE00 . En el siguiente tutorial explicaremos como funciona la aplicacion")
+                intro.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_presentation_target))
             }
 
             override fun onEnded() {
@@ -31,7 +31,7 @@ fun PresentationTarget(intro: View): Target = Target.Builder()
         .build()
 
 
-fun SearchUrlTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun SearchUrlTarget(searchTip: View, screenWidth:Int, screenHeight:Int, context: Context) = Target.Builder()
     .setAnchor((screenWidth/2).toFloat(),(screenHeight/2).toFloat()-220f)
     .setShape(RoundedRectangle(550f, screenWidth.toFloat()-120f,20f))
     .setOverlay(searchTip)
@@ -39,7 +39,7 @@ fun SearchUrlTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Target
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L, DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText("En este campo introduce la url del producto el cual quieres ser notificado si baja de precio")
+            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_search_url_target))
             searchTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -50,7 +50,7 @@ fun SearchUrlTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Target
     .build()
 
 
-fun SelectStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun SelectStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int, context: Context) = Target.Builder()
     .setAnchor((screenWidth/2).toFloat(),(screenHeight/2).toFloat()+260)
     .setShape(RoundedRectangle(450f, screenWidth.toFloat()-120f,20f))
     .setOverlay(searchTip)
@@ -58,7 +58,7 @@ fun SelectStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Targ
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L,DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText("Actualmente soportamos Aliexpress y Amazon, para Aliexpress puedes configurar la región para que los precios se adapten")
+            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_store_select_target))
             searchTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -68,7 +68,7 @@ fun SelectStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Targ
     })
     .build()
 
-fun SearchStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun SearchStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int, context: Context) = Target.Builder()
     .setAnchor((screenWidth/2).toFloat(),(screenHeight/2).toFloat()-100)
     .setShape(Circle(180f))
     .setOverlay(searchTip)
@@ -76,7 +76,7 @@ fun SearchStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Targ
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L,DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText("Una vez introducido la url, pulsa sobre el boton de la lupa")
+            searchTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_search_store_target))
             searchTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -86,7 +86,7 @@ fun SearchStoreTarget(searchTip: View, screenWidth:Int, screenHeight:Int) = Targ
     })
     .build()
 
-fun ScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun ScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int,context: Context) = Target.Builder()
     .setAnchor((screenWidth/3).toFloat()-200f,(screenHeight).toFloat())
     .setShape(Circle(160f))
     .setOverlay(tabsTip)
@@ -94,7 +94,7 @@ fun ScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.Bu
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L,DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText("En esta pestaña podras buscar los productos")
+            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_scrap_tab_target))
             tabsTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -104,7 +104,7 @@ fun ScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.Bu
     })
     .build()
 
-fun ListScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun ListScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int, context: Context) = Target.Builder()
     .setAnchor((screenWidth/3).toFloat()*2-200f,(screenHeight).toFloat())
     .setShape(Circle(160f))
     .setOverlay(tabsTip)
@@ -112,7 +112,7 @@ fun ListScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Targe
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L,DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText("En esta pestaña podras ver la lista de tus productos")
+            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_scrap_list_tab_target))
             tabsTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -122,7 +122,7 @@ fun ListScrapTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Targe
     })
     .build()
 
-fun SettingTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.Builder()
+fun SettingTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int, context: Context) = Target.Builder()
     .setAnchor((screenWidth).toFloat()-200f,(screenHeight).toFloat())
     .setShape(Circle(160f))
     .setOverlay(tabsTip)
@@ -130,7 +130,7 @@ fun SettingTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.
     .setEffect(FlickerEffect(45f, Color.argb(30, 124, 255, 90),500L,DecelerateInterpolator(1f),5))
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
-            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText("En esta pestaña podras cambiar la configuracion ")
+            tabsTip.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_setting_tab_target))
             tabsTip.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
         }
 
@@ -141,13 +141,12 @@ fun SettingTabTarget(tabsTip: View, screenWidth:Int, screenHeight:Int) = Target.
     .build()
 
 
-fun ScrapScreenTarget(intro: View): Target = Target.Builder()
+fun ScrapScreenTarget(intro: View, context: Context): Target = Target.Builder()
     .setOverlay(intro)
     .setOnTargetListener(object : OnTargetListener {
         override fun onStarted() {
             intro.findViewById<TextView>(R.id.Spotlight_text).setTextSize(18f)
-            intro.findViewById<TextView>(R.id.Spotlight_text).setText("Hemos encontrado tu producto!, ahora debes especificar el precio a partir del cual te enviaremos una notificacion cuando el producto" +
-                    "baje de dicho o precio, o puedes indicar si deseas ser notificado cuando este disponible. Tambien debes de especificar cada cuanto tiempo quieres que se compruebe el precio o stock del producto")
+            intro.findViewById<TextView>(R.id.Spotlight_text).setText(context.getString(R.string.tutorial_scrap_screen_target))
 
         }
 

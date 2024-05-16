@@ -36,7 +36,7 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
                     val fullItem = ScrapedItem()
                     val product = dbRepository.getProductByUUID(element.UUID).first() // Obtener el primer elemento del flujo
                     product?.let {
-                        fullItem.url = it.URL
+                        fullItem.url = it.urlReferido
                         fullItem.description = it.descripcion
                         fullItem.title = it.nombre
                         fullItem.uuid = it.UUID
@@ -75,9 +75,6 @@ class ScrapListViewModel(private val dbRepository: DatabaseRepository,
             }
         }
     }
-
-    //TODO futuro, la idea es poder actualizar el tiempo y el precio-isStock de un item
-
 
 
     fun removeWork(uuid: String){

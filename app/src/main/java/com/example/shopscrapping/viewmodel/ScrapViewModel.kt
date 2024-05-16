@@ -1,8 +1,10 @@
 package com.example.shopscrapping.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shopscrapping.R
 import com.example.shopscrapping.bbdd.DatabaseRepository
 import com.example.shopscrapping.bbdd.ProductEntity
 import com.example.shopscrapping.bbdd.WorkEntity
@@ -159,6 +161,11 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
                       _currentProduct.value.src_image_main,
                       _currentProduct.value.url_refered)
 
-
+    fun storeMessageAdvertise(store: Store, currentContext: Context): String =
+        when (store){
+            Store.AMAZON -> currentContext.getString(R.string.message_advertise_amazon)
+            Store.ALIEXPRESS -> currentContext.getString(R.string.message_advertise_aliexpress)
+            else -> currentContext.getString(R.string.message_advertise_amazon)
+        }
 
 }

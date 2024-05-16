@@ -180,29 +180,29 @@ fun LaunchGlobalTutorial(context: Context, activity: Activity) {
 
     val firstRoot = FrameLayout(context)
     val intro = activity.layoutInflater.inflate(R.layout.introduction_layer, firstRoot)
-    targets.add(PresentationTarget(intro))
+    targets.add(PresentationTarget(intro,context))
 
 
     val secondRoot = FrameLayout(context)
     val searchTip = activity.layoutInflater.inflate(R.layout.layout_target, secondRoot)
-    targets.add(SearchUrlTarget(searchTip,screenWidth,screenHeight))
+    targets.add(SearchUrlTarget(searchTip,screenWidth,screenHeight,context))
 
 
-    targets.add(SelectStoreTarget(searchTip,screenWidth,screenHeight))
+    targets.add(SelectStoreTarget(searchTip,screenWidth,screenHeight,context))
 
 
-    targets.add(SearchStoreTarget(searchTip,screenWidth,screenHeight))
+    targets.add(SearchStoreTarget(searchTip,screenWidth,screenHeight,context))
 
 
     val thirdRoot = FrameLayout(context)
     val tabsTip = activity.layoutInflater.inflate(R.layout.tabs_target, thirdRoot)
-    targets.add(ScrapTabTarget(tabsTip,screenWidth,screenHeight))
+    targets.add(ScrapTabTarget(tabsTip,screenWidth,screenHeight,context))
 
 
-    targets.add(ListScrapTabTarget(tabsTip,screenWidth,screenHeight))
+    targets.add(ListScrapTabTarget(tabsTip,screenWidth,screenHeight,context))
 
 
-    targets.add(SettingTabTarget(tabsTip,screenWidth,screenHeight))
+    targets.add(SettingTabTarget(tabsTip,screenWidth,screenHeight,context))
 
     //---- End create Targets
 

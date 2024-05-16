@@ -122,6 +122,7 @@ class UrlScrappingWorker(
             dataForWorkCore.latestMinPrice = it.precioActualGobal
             dataForWorkCore.initialPrice = it.precioInicial
             dataForWorkCore.imgSrc = it.urlImagen
+            dataForWorkCore.currency = it.moneda
             workOfProduct.let {
                 dataForWorkCore.isStock = it.stockAlerta
                 dataForWorkCore.isAllPrice = it.todosPrecios
@@ -188,6 +189,7 @@ data class RequirementsForWork(
     var latestMinPrice: Float = 0.0f,
     var initialPrice: Float = 0.0f,
     var imgSrc: String ="",
+    var currency: String = "",
     var urlReferido: String = "",
     var name: String = "",
     var isStock: Boolean = false,

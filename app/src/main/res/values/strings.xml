@@ -1,8 +1,91 @@
 <resources>
     <string name="app_name">ShopScrapping</string>
-    <string name="tab_scrapping">Scrap</string>
-    <string name="tab_list_scrapping">List of Scraps</string>
-    <string name="tab_list_settings">Settings</string>
+
+    <string name="tab_scrapping">Buscar</string>
+    <string name="tab_scrapping_field_placeholder">Introduce la url…</string>
+    <string name="tab_scrapping_search_error">Hubo un error</string>
+    <string name="tab_scrapping_searching">Buscando…</string>
+    <string name="tab_scrapping_choose_store">Selecciona tienda</string>
+
+    <string-array name="time_options">
+        <item>15 min</item>
+        <item>1 hora</item>
+        <item>4 horas</item>
+        <item>6 horas</item>
+        <item>12 horas</item>
+        <item>1 día</item>
+        <item>2 días</item>
+        <item>3 días</item>
+        <item>4 días</item>
+        <item>5 días</item>
+        <item>6 días</item>
+        <item>7 días</item>
+    </string-array>
+
+
+    <string name="price_name">Precio</string>
+    <string name="price_alert">Alerta de precio</string>
+    <string name="stock_alert">Alerta de stock</string>
+    <string name="refurbished_include">Incluir reacondicionados</string>
+    <string name="check_price_message">Comprobar precio cada …</string>
+    <string name="add_product">Añadir</string>
+    <string name="cancel_product">Cancelar</string>
+    <string name="message_advertise_amazon">Precio global incluye tanto el precio minimo para el producto nuevo como reacondicionado</string>
+    <string name="message_advertise_aliexpress">El precio que aparece aquí puede variar al iniciar sesión en su cuenta</string>
+
+    <string name="tab_list_scrapping">Mis productos</string>
+    <string name="tab_list_scrapping_initial_price">Precio inicial</string>
+    <string name="tab_list_scrapping_current_price">Precio actual</string>
+    <string name="tab_list_scrapping_global_price">Precio global</string>
+    <string name="tab_list_scrapping_added_at">Se añadió en</string>
+    <string name="tab_list_scrapping_search_period">Frecuencia de búsqueda</string>
+    <string name="tab_list_scrapping_search_number">Búsquedas realizadas</string>
+    <string name="tab_list_scrapping_latest_search">Última búsqueda</string>
+    <string name="tab_list_scrapping_alert_stock">Notificar cuando el producto esté disponible</string>
+    <string name="tab_list_scrapping_alert_price">Notificar cuando el precio sea inferior a %s %s</string>
+    <string name="tab_list_scrapping_remove_dialog_title">Borrar producto</string>
+    <string name="tab_list_scrapping_remove_dialog_text">¿Estás seguro de que deseas borrar el producto de tu lista?</string>
+    <string name="tab_list_scrapping_remove_dialog_removed">Producto eliminado de la lista 🗑️</string>
+    <string name="tab_list_scrapping_remove_dialog_yes">Sí</string>
+    <string name="tab_list_scrapping_remove_dialog_no">No</string>
+    <string name="tab_list_scrapping_not_available">No disponible</string>
+    <string name="tab_list_scrapping_empty_screen">Ups, no has añadido ningún producto todavía 😟</string>
+
+
+
+
+    <string name="tab_list_settings">Ajustes</string>
+    <string name="tab_list_settings_only_wifi">Solo Wifi</string>
+    <string name="tab_list_settings_disable_notifications">Deshabilitar notificaciones secundarias</string>
+    <string name="tab_list_settings_enable_tutorial">Ver tutorial</string>
+
+
+    <string name="toast_product_added">🤞 Producto añadido correctamente</string>
+
+
+    <string name="tutorial_presentation_target">Bienvenidos a Price Watcher!! 😀  \nEn el siguiente tutorial explicaremos paso a paso cómo usar la aplicación</string>
+    <string name="tutorial_search_url_target">En este campo introduce la url del producto el cual quieres ser notificado cuando baje de precio o esté disponible</string>
+    <string name="tutorial_store_select_target">Actualmente soportamos Aliexpress y Amazon, para Aliexpress puedes configurar el país para que los precios se adapten a tu zona</string>
+    <string name="tutorial_search_store_target">Una vez introducido la url, pulse sobre el botón de la lupa y buscaremos tu producto</string>
+    <string name="tutorial_scrap_tab_target">En esta pestaña podrás buscar el producto el cual quieres ser notificado cuando baje de precio o esté disponible</string>
+    <string name="tutorial_scrap_list_tab_target">Todos los productos que vayas añadiendo aparecerán en esta pestaña, junto con información del estado de cada uno de ellos</string>
+    <string name="tutorial_setting_tab_target">En esta pestaña podrás acceder a los ajustes de la aplicación</string>
+    <string name="tutorial_scrap_screen_target">\n\nHemos encontrado tu producto!\n\n ahora debes especificar el precio a partir del cual te enviaremos una notificacion cuando el producto baje de dicho o precio, o puedes indicar si deseas ser notificado cuando esté disponible. \n\nTambién debes de especificar cada cuanto tiempo quieres que se compruebe el precio o stock del producto.</string>
+
+
+    <string name="notification_product_added_title">✅ Nuevo producto añadido</string>
+    <string name="notification_buy_button">🛒 Comprar</string>
+
+    <string name="notification_price_drop">🎉 Novedad! Bajada de precio!</string>
+    <string name="notification_price_drop_refur">🎉 Novedad! Bajada de precio en segunda mano!</string>
+    <string name="notification_refur_stock">🎉 Novedad! Disponible de segunda mano</string>
+    <string name="notification_again_stock">🎉 Novedad! Vuelve a estar disponible</string>
+
+
+    <string name="notification_stock">🎉HURRA!🎉 Producto disponible!</string>
+    <string name="notification_price_limite">🎉HURRA!🎉 Tu producto ha bajado del límite!</string>
+
+
     <string name="next_target">Siguiente</string>
     <string name="close_spotlight">Saltar tutorial</string>
 </resources>

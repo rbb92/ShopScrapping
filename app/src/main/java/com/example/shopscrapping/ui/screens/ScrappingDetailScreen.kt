@@ -61,6 +61,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -108,7 +109,11 @@ fun ScrapingDetailScreen(
 {
     val currentProductUiState = scrapViewModel.currentProduct.collectAsState().value
 
-    val timeOptions = listOf("15 min","1 hora", "4 horas", "6 horas", "12 horas", "1 día", "2 días", "3 días", "4 días", "5 días", "6 días", "7 días")
+    val currentContext = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
+    val timeOptions = currentContext.resources.getStringArray(R.array.time_options).toList()
+
     var priceLimit by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(timeOptions[0]) }
@@ -116,8 +121,6 @@ fun ScrapingDetailScreen(
     var inAllProducts by remember { mutableStateOf(false) }
     var subProductSelected by remember { mutableStateOf(scrapUiState.product?.subProductSelected)}
 
-    val currentContext = LocalContext.current
-    val focusManager = LocalFocusManager.current
 
 
     var tutorialActivated by remember { mutableStateOf( false) }
@@ -169,9 +172,7 @@ fun ScrapingDetailScreen(
 
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    //TODO si precio 0 o vacio, mostrar no disponible
 
-                    //TODO Descripción en este punto.
                     Text(
                         text = currentProductUiState.description,
                         style = MaterialTheme.typography.titleSmall,
@@ -225,13 +226,13 @@ fun ScrapingDetailScreen(
                                 Text(
                                     modifier = Modifier.padding(bottom = 6.dp),
                                     fontStyle = FontStyle.Italic,
-                                    text = "Precio",
+                                    text = stringResource(id = R.string.price_name),
                                     style = MaterialTheme.typography.labelLarge
                                 )
                                 Spacer(modifier = Modifier)
                                 Text(
                                     text = if(currentProductUiState.price>0.0f) "${currentProductUiState.price} ${currencyToString(currentProductUiState.currency)}"
-                                            else "No disponible",
+                                            else stringResource(id = R.string.tab_list_scrapping_not_available),
                                     modifier = Modifier.padding(bottom = 6.dp),
                                     style = MaterialTheme.typography.labelLarge
                                 )
@@ -247,7 +248,7 @@ fun ScrapingDetailScreen(
                                         Text(
                                             modifier = Modifier.padding(bottom = 16.dp),
                                             fontStyle = FontStyle.Italic,
-                                            text = "Precio global",
+                                            text = stringResource(id = R.string.tab_list_scrapping_global_price),
                                             style = MaterialTheme.typography.labelLarge
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
@@ -278,7 +279,8 @@ fun ScrapingDetailScreen(
                                     Text(
                                         modifier = Modifier.padding(top = 6.dp, start = 30.dp),
                                         fontStyle = FontStyle.Italic,
-                                        text = "Precio global incluye tanto el precio minimo para el producto nuevo como reacondicionado",
+                                        //TODO adaptar texto a cada una de las tiendas
+                                        text = scrapViewModel.storeMessageAdvertise(currentProductUiState.store,currentContext) ,
                                         style = MaterialTheme.typography.labelSmall
                                     )
                             }
@@ -304,8 +306,8 @@ fun ScrapingDetailScreen(
                         },
                         enabled = !inStockOption,
                         singleLine = true,
-                        label = { Text(text = "precio") },
-                        supportingText = { Text(text = "Alerta de precio")},
+                        label = { Text(text = stringResource(id = R.string.price_name)) },
+                        supportingText = { Text(text = stringResource(id = R.string.price_alert))},
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
 
 
@@ -320,7 +322,7 @@ fun ScrapingDetailScreen(
                             .padding(horizontal = 10.dp)
                             .fillMaxWidth())
                     {
-                        Text(text = "Alerta de stock")
+                        Text(text = stringResource(id = R.string.stock_alert))
                         Spacer(modifier = Modifier)
                         RadioButton(selected = inStockOption, onClick = { inStockOption = !inStockOption })
                     }
@@ -335,7 +337,7 @@ fun ScrapingDetailScreen(
                             .padding(horizontal = 10.dp)
                             .fillMaxWidth())
                     {
-                        Text(text = "Incluir reacondicionados")
+                        Text(text = stringResource(id = R.string.refurbished_include))
                         Spacer(modifier = Modifier)
                         RadioButton(selected = inAllProducts, onClick = { inAllProducts = !inAllProducts })
                     }
@@ -355,7 +357,7 @@ fun ScrapingDetailScreen(
                             readOnly = true,
                             value = selectedOption,
                             onValueChange = { },
-                            label = { Text("Comprobar producto cada ...") },
+                            label = { Text(stringResource(id = R.string.check_price_message)) },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(
                                     expanded = expanded
@@ -407,19 +409,19 @@ fun ScrapingDetailScreen(
 
                             scrapViewModel.createNewWork(workDescription)
                             notificationProductAdded(currentContext, currentProductUiState.title)
-                            showToast(currentContext, "\uD83E\uDD1E Producto añadido correctamente")
+                            showToast(currentContext, currentContext.getString(R.string.toast_product_added))
                             newProduct()
                             goBack()
                         },
                             enabled = if (!inStockOption and (priceLimit.toFloatOrNull() == null) ) false else true
                         )
                         {
-                            Text(text = "Añadir")
+                            Text(text = stringResource(id = R.string.add_product))
                         }
                         Spacer(modifier = Modifier.padding(horizontal = 36.dp))
                         Button(onClick = goBack)
                         {
-                            Text(text = "Cancelar")
+                            Text(text = stringResource(id = R.string.cancel_product))
                         }
                     }
 
@@ -492,7 +494,7 @@ fun LaunchScrappingScreenTutorial(context: Context, activity: Activity) {
 
     val firstRoot = FrameLayout(context)
     val intro = activity.layoutInflater.inflate(R.layout.introduction_layer, firstRoot)
-    targets.add(ScrapScreenTarget(intro))
+    targets.add(ScrapScreenTarget(intro,context))
 
     //---- End create Targets
 
