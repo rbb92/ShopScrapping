@@ -76,7 +76,7 @@ suspend fun AliexpressFetcher(urlToScrape: String, region: CountriesCode): Scrap
                 }
             }
 
-            val jsonContent = extractJsonResponse(response.bodyAsText())?:""
+            val jsonContent = extractJsonResponseAliexpress(response.bodyAsText())?:""
 
             //for debugging purpouse
             val MAX_LOG_LENGTH = 2000
@@ -84,7 +84,7 @@ suspend fun AliexpressFetcher(urlToScrape: String, region: CountriesCode): Scrap
                 val chunk = jsonContent.substring(i, minOf(i + MAX_LOG_LENGTH, jsonContent.length))
                 Log.d("JSON", chunk)
             }
-            val scrapedProduct = parseJsonResponse(jsonContent)
+            val scrapedProduct = parseJsonResponseAliexpress(jsonContent)
 
             //TODO insertar referido Aliexpress aqui
             ScrapState(url = urlClean, url_refered = urlClean, store = Store.ALIEXPRESS, product = scrapedProduct)
@@ -114,7 +114,7 @@ suspend fun AliexpressFetcher(urlToScrape: String, region: CountriesCode): Scrap
 //}
 
 
-fun extractJsonResponse(body: String): String? {
+fun extractJsonResponseAliexpress(body: String): String? {
     val prefijo = "window.runParams = "
     val startIndex = body.indexOf(prefijo)
 
@@ -145,7 +145,7 @@ fun extractJsonResponse(body: String): String? {
     return null
 }
 
-fun parseJsonResponse(jsonResponse : String): ScrapProduct{
+fun parseJsonResponseAliexpress(jsonResponse : String): ScrapProduct{
     val parser: Parser = Parser.default()
     val stringBuilder: StringBuilder = StringBuilder(jsonResponse.replace("data","\"data\""))
     val json: JsonObject = parser.parse(stringBuilder) as JsonObject
@@ -203,51 +203,3 @@ fun parseJsonResponse(jsonResponse : String): ScrapProduct{
 
 }
 
-// BACKUP
-//fun parseJsonResponse(jsonResponse : String){
-//    val parser: Parser = Parser.default()
-//    val stringBuilder: StringBuilder = StringBuilder(jsonResponse.replace("data","\"data\""))
-//    val json: JsonObject = parser.parse(stringBuilder) as JsonObject
-//
-//    //extraemos titulo global
-//    val tituloGlobal = json.obj("data")?.obj("metaDataComponent")?.string("title")
-//
-//    //extraemos imagen global
-//    val imagenGlobal = json.obj("data")?.obj("imageComponent")?.array<String>("image640PathList")?.get(0)
-//
-//    Log.d("parsing","Titulo general: ${tituloGlobal}")
-//    Log.d("parsing","Imagen general: ${imagenGlobal}")
-//
-//    val subProductos = json.obj("data")?.obj("priceComponent")?.array<JsonObject>("skuPriceList")
-//    val listOfSubProducto = mutableListOf<SubProducto>()
-//    if (subProductos != null) {
-//        subProductos.forEach { element ->
-//            var subProducto = SubProducto(identificador = element.string("skuIdStr")?:"",
-//                precio = element.obj("skuVal")?.obj("skuActivityAmount")?.float("value")?:0.0f,
-//                imagen = "",
-//                tituloAdicional = ""
-//            )
-//
-//            val referencia = element.string("skuPropIds")?:""
-//            Log.d("parsing","referencia: ${referencia}")
-//            json.obj("data")?.obj("skuComponent")?.array<JsonObject>("productSKUPropertyList")?.get(0)?.array<JsonObject>("skuPropertyValues")?.forEach { element1 ->
-//                if (element1.int("propertyValueId") == referencia.toInt()) {
-//                    subProducto.imagen = element1?.string("skuPropertyImagePath")?: ""
-//                    subProducto.tituloAdicional = element1?.string("propertyValueDisplayName")?: ""
-//                }
-//            }
-//            listOfSubProducto.add(subProducto)
-//        }
-//    }
-//
-//    Log.d("parsing","Subproductos: ${listOfSubProducto}")
-//
-//}
-
-
-//data class SubProducto(
-//    var tituloAdicional: String,
-//    val identificador: String,
-//    var imagen: String,
-//    val precio: Float
-//)

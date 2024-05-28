@@ -8,7 +8,11 @@ suspend fun StoreFetcher (url: String, store:Store,country: CountriesCode): Scra
     when (store)
     {
         Store.AMAZON -> AmazonFetcher(url)
-        Store.ALIEXPRESS -> AliexpressFetcher(url, country) //TODO aliexpress store
+        Store.ALIEXPRESS -> AliexpressFetcher(url, country)
+        Store.CARREFOUR -> CarrefourStore(url)
+        Store.CORTEINGLES -> CorteInglesStore(url)
+        Store.MEDIAMARKT -> MediaMarktStore(url)
+        Store.PCCOMPONENTES -> PcComponentesStore(url)
         else -> AmazonFetcher(url)
 
     }

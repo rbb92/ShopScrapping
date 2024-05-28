@@ -110,7 +110,7 @@ class ScrapViewModel(private val dbRepository: DatabaseRepository,
             Log.d("ablanco","preparando scrape")
 
             _scrapState.update { it.copy(isScrapping = true, isScrappingProcess = true) }
-            updateScrapeUIState(StoreFetcher(url,store,country)) //Se crea un nuevo ScrapeState //TODO quitar ALIEXPRESS hardcoding
+            updateScrapeUIState(StoreFetcher(url,store,country))
             _scrapState.update { it.copy(isScrappingProcess = true, region = country) }
             updateCurrentProductUI()
 //            fetchAmazonStore(url)

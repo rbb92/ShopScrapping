@@ -50,6 +50,7 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "META-INF/DEPENDENCIES"
+            excludes += "mozilla/public-suffix-list.txt"
         }
     }
 }
@@ -84,8 +85,17 @@ dependencies {
 
 
     //Scrap
-    implementation("it.skrape:skrapeit:1.1.5")
-    implementation("it.skrape:skrapeit-browser-fetcher:1.1.5")
+    implementation("it.skrape:skrapeit:1.1.5"){
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit")
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit-android")
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit-cssparser")
+    }
+    implementation("it.skrape:skrapeit-browser-fetcher:1.1.5"){
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit")
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit-android")
+        exclude(group = "net.sourceforge.htmlunit", module = "htmlunit-cssparser")
+    }
+    implementation("net.sourceforge.htmlunit:htmlunit-android:2.63.0")
 
     //Json parser
     implementation("com.beust:klaxon:5.5")
