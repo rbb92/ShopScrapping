@@ -13,6 +13,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import it.skrape.fetcher.ContentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -28,7 +29,7 @@ suspend fun MediaMarktStore(url_: String): ScrapState =
                 pipelining = true
             }
             install(UserAgent) {
-                agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
+                agent = Constants.USER_AGENT
             }
 
         }

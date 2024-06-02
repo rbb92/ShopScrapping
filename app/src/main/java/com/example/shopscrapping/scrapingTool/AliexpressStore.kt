@@ -49,7 +49,7 @@ suspend fun AliexpressFetcher(urlToScrape: String, region: CountriesCode): Scrap
                 pipelining = true
             }
             install(UserAgent) {
-                agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"
+                agent = Constants.USER_AGENT
 //                agent = "AliApp(AliExpress/8.51.0) "
 
             }

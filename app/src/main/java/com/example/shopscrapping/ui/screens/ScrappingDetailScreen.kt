@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -65,8 +67,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.shopscrapping.R
 import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.data.Period
@@ -87,16 +93,16 @@ import com.example.shopscrapping.ui.tutorial.SearchStoreTarget
 import com.example.shopscrapping.ui.tutorial.SearchUrlTarget
 import com.example.shopscrapping.ui.tutorial.SelectStoreTarget
 import com.example.shopscrapping.ui.tutorial.SettingTabTarget
+import com.example.shopscrapping.ui.utils.CustomImageLoader
 import com.example.shopscrapping.utils.currencyToString
 import com.example.shopscrapping.utils.priceToFloat
 import com.example.shopscrapping.viewmodel.ScrapViewModel
-import com.google.accompanist.coil.rememberCoilPainter
 import com.takusemba.spotlight.OnSpotlightListener
 import com.takusemba.spotlight.Spotlight
 import com.takusemba.spotlight.Target
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 fun ScrapingDetailScreen(
     scrapUiState: ScrapState,
@@ -153,21 +159,20 @@ fun ScrapingDetailScreen(
                         text = currentProductUiState.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-//                        color = Color.Black,
+                        textAlign = TextAlign.Center,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(20.dp))
-                    val imagePainter: Painter = rememberCoilPainter(
-                        request = currentProductUiState.src_image_main
-//                        request = if(currentProductUiState.src_image_sec != "") currentProductUiState.src_image_sec else currentProductUiState.src_image_main
-                    )
+                    Log.d("Coil","rememberImagePainter!!!!")
+                    val imagePainter: Painter = CustomImageLoader(imageUrl = currentProductUiState.src_image_main)
                     Image(
                         painter = imagePainter,
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth(0.6f)
-                            .border(2.dp, md_theme_light_onSurface, RoundedCornerShape(1.dp)),
+                            .fillMaxWidth(0.8f).aspectRatio(1f)
+//                            .border(2.dp, md_theme_light_onSurface, RoundedCornerShape(1.dp)),
+                            .clip(MaterialTheme.shapes.small),
                         contentScale = ContentScale.Crop,
 
                     )
@@ -191,10 +196,7 @@ fun ScrapingDetailScreen(
                         ) {
                             items(scrapViewModel.numberSubProducts()) { index ->
 //                                Spacer(modifier = Modifier.height(20.dp))
-                                val imgSubproduct: Painter = rememberCoilPainter(
-                                    request = scrapViewModel.subProductImage(index)
-                                )
-
+                                val imgSubproduct: Painter = CustomImageLoader(scrapViewModel.subProductImage(index))
                                 SubProductButton(
                                     image = imgSubproduct,
                                     text = scrapViewModel.subProductTitle(index),

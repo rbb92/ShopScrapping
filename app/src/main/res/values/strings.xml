@@ -63,16 +63,17 @@
     <string name="toast_product_added">🤞 Producto añadido correctamente</string>
 
 
-    <string name="tutorial_presentation_target">Bienvenidos a Price Watcher!! 😀  \nEn el siguiente tutorial explicaremos paso a paso cómo usar la aplicación</string>
+    <string name="tutorial_presentation_target">Bienvenidos a Price Watcher!! 😀  \n\nEn el siguiente tutorial explicaremos en menos de un minuto cómo usar la aplicación</string>
     <string name="tutorial_search_url_target">En este campo introduce la url del producto el cual quieres ser notificado cuando baje de precio o esté disponible</string>
-    <string name="tutorial_store_select_target">Actualmente soportamos Aliexpress y Amazon, para Aliexpress puedes configurar el país para que los precios se adapten a tu zona</string>
-    <string name="tutorial_search_store_target">Una vez introducido la url, pulse sobre el botón de la lupa y buscaremos tu producto</string>
-    <string name="tutorial_scrap_tab_target">En esta pestaña podrás buscar el producto el cual quieres ser notificado cuando baje de precio o esté disponible</string>
-    <string name="tutorial_scrap_list_tab_target">Todos los productos que vayas añadiendo aparecerán en esta pestaña, junto con información del estado de cada uno de ellos</string>
-    <string name="tutorial_setting_tab_target">En esta pestaña podrás acceder a los ajustes de la aplicación</string>
-    <string name="tutorial_scrap_screen_target">\n\nHemos encontrado tu producto!\n\n ahora debes especificar el precio a partir del cual te enviaremos una notificacion cuando el producto baje de dicho o precio, o puedes indicar si deseas ser notificado cuando esté disponible. \n\nTambién debes de especificar cada cuanto tiempo quieres que se compruebe el precio o stock del producto.</string>
+    <string name="tutorial_store_select_target">Actualmente soportamos Aliexpress ,Amazon, MediaMarkt, PcComponentes, el Corte Inglés y Carrefour, y añadiremos más tiendas en el futuro!!</string>
+    <string name="tutorial_search_store_target">Una vez introducido la url del producto e indicado su tienda, pulse sobre el botón de la lupa y buscaremos tu producto 🕵️‍♂️</string>
+    <string name="tutorial_scrap_tab_target">Desde esta pestaña podrás buscar nuevos productos</string>
+    <string name="tutorial_scrap_list_tab_target">Cada vez que añadas un producto aparecerá en esta pestaña, podrás ver cómo va evolucionando el precio del artículo, y mucha más información!</string>
+    <string name="tutorial_setting_tab_target">En la pestaña de ajustes podrás cambiar las opciones de la aplicación</string>
+    <string name="tutorial_scrap_screen_target">\n\nHemos encontrado tu producto!\n\n Ahora solo debes hacer dos cosas:\n\n 1. Puedes especificar el precio a partir del cual te notificaremos cuando el producto baje de dicho precio, o puedes indicar si deseas ser notificado cuando vuelva a estar disponible. \n\n 2. Debes especificar cada cuanto tiempo quieres que se compruebe el precio o stock del producto.</string>
 
 
+    <string name="enable_notifications_toast">⚠️ Para poderte notificar bajadas de precio, deberás habilitar las notificaciones para esta aplicación</string>
     <string name="notification_product_added_title">✅ Nuevo producto añadido</string>
     <string name="notification_buy_button">🛒 Comprar</string>
 

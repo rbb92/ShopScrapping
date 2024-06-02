@@ -70,7 +70,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
 
-    implementation("com.google.accompanist:accompanist-coil:0.10.0")
+//    implementation("com.google.accompanist:accompanist-coil:0.10.0")
+    implementation("io.coil-kt:coil-compose:1.3.2")
+    implementation("io.coil-kt:coil:1.3.2")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")

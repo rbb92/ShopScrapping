@@ -3,14 +3,11 @@ package com.example.shopscrapping.ui.screens
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color.argb
 import android.graphics.Point
-import android.graphics.PointF
 import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -44,13 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shopscrapping.R
 import com.example.shopscrapping.bbdd.PreferencesManager
 import com.example.shopscrapping.data.HomeUIState
 import com.example.shopscrapping.data.TabsTypes
+import com.example.shopscrapping.notifications.showToast
 import com.example.shopscrapping.ui.tutorial.ListScrapTabTarget
 import com.example.shopscrapping.ui.tutorial.PresentationTarget
 import com.example.shopscrapping.ui.tutorial.ScrapTabTarget
@@ -61,20 +58,16 @@ import com.example.shopscrapping.ui.tutorial.SettingTabTarget
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.HomeViewModel
 import com.takusemba.spotlight.OnSpotlightListener
-import com.takusemba.spotlight.OnTargetListener
 import com.takusemba.spotlight.Spotlight
 import com.takusemba.spotlight.Target
-import com.takusemba.spotlight.effet.FlickerEffect
-import com.takusemba.spotlight.effet.RippleEffect
-import com.takusemba.spotlight.shape.Circle
-import com.takusemba.spotlight.shape.RoundedRectangle
 
 
 @Composable
 fun ScrappingHomeContent(
     activity: Activity,
     modifier: Modifier,
-    homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    requestNotifications: () -> Unit
 ) {
     val homeUiState = homeViewModel.homeUIState.collectAsState().value
 
@@ -131,10 +124,10 @@ fun ScrappingHomeContent(
                         tabSelection = TabsTypes.ScrapScreen
                     },
                         modifier = Modifier
-                        .weight(1f)
-                        .padding(
-                            horizontal = 16.dp
-                        ))
+                            .weight(1f)
+                            .padding(
+                                horizontal = 16.dp
+                            ))
                 }
 
                 AnimatedVisibility(
@@ -158,7 +151,7 @@ fun ScrappingHomeContent(
     if(!tutorialActivated and !PreferencesManager(LocalContext.current).isMainTutorialCompleted())
     {
         tutorialActivated = true
-        LaunchGlobalTutorial(context = LocalContext.current , activity = activity)
+        LaunchGlobalTutorial(context = LocalContext.current , activity = activity, requestNotifications)
         PreferencesManager(LocalContext.current).mainTutorialCompleted()
 
     }
@@ -167,7 +160,7 @@ fun ScrappingHomeContent(
 }
 
 @Composable
-fun LaunchGlobalTutorial(context: Context, activity: Activity) {
+fun LaunchGlobalTutorial(context: Context, activity: Activity, requestNotifications:() -> Unit) {
     val targets = ArrayList<Target>()
     val display = activity.windowManager.defaultDisplay
     val size = Point()
@@ -221,6 +214,8 @@ fun LaunchGlobalTutorial(context: Context, activity: Activity) {
             override fun onEnded() {
 
                 Log.d("Spotlight","Fiin Spotlight")
+                showToast(context, context.getString(R.string.enable_notifications_toast), Toast.LENGTH_LONG)
+                requestNotifications()
             }
         })
         .build()

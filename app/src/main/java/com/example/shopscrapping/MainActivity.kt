@@ -3,25 +3,17 @@ package com.example.shopscrapping
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.example.shopscrapping.ui.theme.ShopScrappingTheme
 import com.example.shopscrapping.ui.ShopScrappingApp
@@ -38,10 +30,11 @@ class MainActivity : ComponentActivity() {
                 Surface{
                     val windowSize = calculateWindowSizeClass(this)
                     val activity: Activity = this
-                    requestNotificationPermission()
+//                    requestNotificationPermission()
                     ShopScrappingApp(
                         context = applicationContext,
                         windowSize = windowSize.widthSizeClass,
+                        requestNotifications = {requestNotificationPermission()},
                         activity = activity
                     )
                 }
@@ -74,12 +67,12 @@ class MainActivity : ComponentActivity() {
                     this, permission
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Action to take when permission is already granted
-                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show()
                 }
 
                 shouldShowRequestPermissionRationale(permission) -> {
                     // Action to take when permission was denied
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
                 }
 
                 else -> {
@@ -89,7 +82,7 @@ class MainActivity : ComponentActivity() {
             }
         } else {
             // Device does not support required permission
-            Toast.makeText(this, "No required permission", Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, "No required permission", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -56,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
@@ -76,6 +77,8 @@ import com.example.shopscrapping.R
 import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.data.getDrawableFromCountryCode
+import com.example.shopscrapping.scrapingTool.canSetRegion
+import com.example.shopscrapping.scrapingTool.imageResourceFromStore
 import com.example.shopscrapping.ui.theme.md_theme_light_primary
 import com.example.shopscrapping.ui.theme.md_theme_light_primaryContainer
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
@@ -180,7 +183,8 @@ fun ScrapingScreen(
 //            StoreDropdownMenu({ currentStore = it},currentStore)
             Spacer(modifier = Modifier.height(24.dp))
 
-            CountryMenu({ currentCountry = it},currentCountry, modifier)
+            if(canSetRegion(currentStore))
+                CountryMenu({ currentCountry = it},currentCountry, modifier)
 
             if(scrapUiState.isError)
             {
@@ -252,17 +256,21 @@ fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifie
 
         Row(modifier = Modifier
             .clickable { expanded = true }
-            .fillMaxWidth(0.6f)
-            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth(0.7f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.inversePrimary)
             .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = if (currentStore != Store.NULL) currentStore.name else stringResource(R.string.tab_scrapping_choose_store),
+                text = if (currentStore != Store.NULL) "${currentStore.name}  " else stringResource(R.string.tab_scrapping_choose_store),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
 //                    .align(Alignment.CenterStart),
 //                style = MaterialTheme.typography.bodyMedium,
             )
+            if (currentStore != Store.NULL)
+                Image(painterResource(imageResourceFromStore(currentStore)),"", modifier=Modifier.size(18.dp))
             IconButton(
                 onClick = { expanded = true },
 //                modifier = Modifier.align(Alignment.CenterEnd)
@@ -281,7 +289,15 @@ fun StoreMenu(updateStore: (Store)->Unit, currentStore: Store, modifier: Modifie
                     updateStore(store)
                     expanded = false
                             },
-                    text = { Text(text = store.name) })
+                    text = {
+                        Row(horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(1f))
+                        {
+                            Image(painterResource(imageResourceFromStore(store)),"", modifier = Modifier.size(18.dp) )
+//                            Spacer(modifier = Modifier.weight(1f))
+                            Text(text = "    ${store.name}")
+                        }
+                    }
+                )
             }
 
         }
@@ -300,7 +316,8 @@ fun CountryMenu(updateStore: (CountriesCode)->Unit, currentCountry: CountriesCod
         Row(modifier = Modifier
             .clickable { expanded = true }
             .fillMaxWidth(0.4f)
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.inversePrimary)
+            .clip(RoundedCornerShape(8.dp))
             .border(2.dp, Color.Black, RoundedCornerShape(8.dp)),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {

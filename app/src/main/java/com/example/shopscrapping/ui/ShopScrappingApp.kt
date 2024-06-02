@@ -1,26 +1,11 @@
 package com.example.shopscrapping.ui
 
-import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.shopscrapping.bbdd.PreferencesManager
-import com.example.shopscrapping.ui.screens.ScrapingScreen
 import com.example.shopscrapping.ui.screens.ScrappingHomeContent
-import com.example.shopscrapping.ui.utils.ScreenSize
-import com.example.shopscrapping.viewmodel.ScrapViewModel
 
 @Composable
 fun ShopScrappingApp(
@@ -28,6 +13,7 @@ fun ShopScrappingApp(
     windowSize: WindowWidthSizeClass,
     activity: Activity,
     modifier: Modifier = Modifier,
+    requestNotifications: () -> Unit,
 ) {
 
 
@@ -50,6 +36,7 @@ fun ShopScrappingApp(
 
     ScrappingHomeContent(
         activity = activity,
+        requestNotifications = requestNotifications,
         modifier = modifier
     )
 }

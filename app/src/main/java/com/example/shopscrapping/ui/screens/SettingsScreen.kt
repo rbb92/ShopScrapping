@@ -34,7 +34,7 @@ fun SettingsScreen(
 
     val prueba:(Boolean) -> Unit ={ isChecked -> Log.d("ablancom","nuevo valor de boolean1: ${isChecked}")}
     Column (modifier = modifier) {
-        Spacer(modifier = Modifier.size(18.dp))
+        Spacer(modifier = Modifier.size(9.dp))
         SettingRow(name= stringResource(id = R.string.tab_list_settings_only_wifi),
                    checked = settingsUIState.isWifiOnly,
                    action = {disabled -> settingsViewModel.updateIsWifi(disabled)})
@@ -52,7 +52,7 @@ fun SettingsScreen(
                 settingsViewModel.enableTutorials()
                 onStartTutorial()
         })
-        Spacer(modifier = Modifier.size(9.dp))
+        Spacer(modifier = Modifier.size(18.dp))
         Divider(thickness = 4.dp)
     }
 }

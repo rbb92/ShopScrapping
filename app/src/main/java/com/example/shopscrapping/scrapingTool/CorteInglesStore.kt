@@ -28,7 +28,7 @@ suspend fun CorteInglesStore(url_: String): ScrapState =
                 pipelining = true
             }
             install(UserAgent) {
-                agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
+                agent = Constants.USER_AGENT
             }
 
         }
@@ -63,7 +63,7 @@ suspend fun CorteInglesStore(url_: String): ScrapState =
 fun extractJsonResponseCorteIngles(body: String): String? {
     val prefijo = "ld+json"
     var startIndex = 0
-    while(startIndex != -1)
+    while(startIndex != 1)
     {
         Log.d("ablancom","Indice ${startIndex}")
          startIndex = body.indexOf(prefijo,startIndex)+2

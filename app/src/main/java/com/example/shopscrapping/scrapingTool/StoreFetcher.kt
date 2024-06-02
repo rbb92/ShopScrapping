@@ -1,9 +1,15 @@
 package com.example.shopscrapping.scrapingTool
 
+import com.example.shopscrapping.R
 import com.example.shopscrapping.data.CountriesCode
 import com.example.shopscrapping.data.ScrapState
 import com.example.shopscrapping.data.Store
 
+//Para obtener el favicon de una web:
+//http://www.google.com/s2/favicons?domain=
+object Constants {
+    const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0"
+}
 suspend fun StoreFetcher (url: String, store:Store,country: CountriesCode): ScrapState =
     when (store)
     {
@@ -43,3 +49,28 @@ fun removerParametrosUrl(url: String): String {
         url
     }
 }
+
+fun imageResourceFromStore(store: Store):Int =
+    when (store)
+    {
+        Store.AMAZON -> R.drawable.amazon
+        Store.ALIEXPRESS -> R.drawable.aliexpress
+        Store.CARREFOUR -> R.drawable.carrefour
+        Store.CORTEINGLES -> R.drawable.corteingles
+        Store.MEDIAMARKT -> R.drawable.mediamarkt
+        Store.PCCOMPONENTES -> R.drawable.pccomponentes
+        else -> R.drawable.amazon
+
+    }
+fun canSetRegion(store: Store):Boolean =
+    when (store)
+    {
+        Store.AMAZON -> false
+        Store.ALIEXPRESS -> true
+        Store.CARREFOUR -> false
+        Store.CORTEINGLES -> false
+        Store.MEDIAMARKT -> false
+        Store.PCCOMPONENTES -> false
+        else -> false
+
+    }

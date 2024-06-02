@@ -73,7 +73,7 @@
     <string name="tutorial_setting_tab_target">In this tab you will be able to access to the application settings</string>
     <string name="tutorial_scrap_screen_target">\n\nWe have found your product!\n\n Now you must specify the price from which we will send you a notification when the product drops in price, or you can indicate if you want to be notified when it becomes available. \n\nYou must also specify how often you want the price or stock of the product to be checked.</string>
 
-
+    <string name="enable_notifications_toast">⚠️ In order to notify you of price drops, you need to enable notifications for this application.</string>
     <string name="notification_product_added_title">✅ New product added</string>
     <string name="notification_buy_button">🛒 Buy</string>
 

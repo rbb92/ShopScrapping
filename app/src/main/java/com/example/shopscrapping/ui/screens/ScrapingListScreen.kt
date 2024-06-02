@@ -87,15 +87,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
 import com.example.shopscrapping.R
 import com.example.shopscrapping.data.ScrapListState
 import com.example.shopscrapping.data.ScrapedItem
+import com.example.shopscrapping.data.Store
 import com.example.shopscrapping.notifications.showToast
+import com.example.shopscrapping.scrapingTool.imageResourceFromStore
+import com.example.shopscrapping.ui.utils.CustomImageLoader
 import com.example.shopscrapping.utils.convertirMinutosADiasYMinutos
 import com.example.shopscrapping.utils.epochToString
 import com.example.shopscrapping.viewmodel.AppViewModelProvider
 import com.example.shopscrapping.viewmodel.ScrapListViewModel
-import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.delay
 
 
@@ -243,6 +246,7 @@ fun ScrapItemCard(scrapListViewModel: ScrapListViewModel,
                             scrapItem.priceDifference,
                             scrapItem.currentPrice,
                             scrapItem.currency,
+                            Store.valueOf(scrapItem.store),
                             modifier.alpha(alpha)
                         )
                     }
@@ -569,7 +573,7 @@ fun ScrapInformationExpanded(scrapListViewModel: ScrapListViewModel,
 
 
 @Composable
-fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float, currency: String,  modifier: Modifier) {
+fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float, currency: String, store: Store,  modifier: Modifier) {
     Column(modifier = modifier) {
         Text(
             text = title,
@@ -625,7 +629,8 @@ fun ScrapInformation(title: String, diffPrice: Int, currentPrice: Float, currenc
                             .padding(top = 8.dp, end = 4.dp),
                         tint = Color.Red)
                 }
-
+                Spacer(modifier = Modifier.weight(1f))
+                Image(painterResource(imageResourceFromStore(store)),"", modifier = Modifier.size(16.dp) )
             }
 
         }
@@ -640,8 +645,8 @@ fun ImageIcon(url_img: String, modifier: Modifier) {
             .padding(1.dp)
             .clip(MaterialTheme.shapes.extraSmall),
         contentScale = ContentScale.Crop,
-        painter = rememberCoilPainter(
-            request = url_img
+        painter = CustomImageLoader(
+             url_img
         ),
 
         contentDescription = null
@@ -656,12 +661,13 @@ fun FullImage(url_img: String, modifier: Modifier) {
             modifier = modifier
 //                .size(220.dp)
                 .fillMaxWidth(0.8f)
+                .aspectRatio(1f)
 //                .wrapContentWidth()
 //                .padding(1.dp)
                 .clip(MaterialTheme.shapes.small),
             contentScale = ContentScale.Crop,
-            painter = rememberCoilPainter(
-                request = url_img
+            painter = CustomImageLoader(
+                 url_img
             ),
 
             contentDescription = null
