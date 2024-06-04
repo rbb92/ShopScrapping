@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShopScrapping</string>
+    <string name="app_name">Cazachollo</string>
 
     <string name="tab_scrapping">Buscar</string>
     <string name="tab_scrapping_field_placeholder">Introduce la url…</string>
@@ -63,7 +63,7 @@
     <string name="toast_product_added">🤞 Producto añadido correctamente</string>
 
 
-    <string name="tutorial_presentation_target">Bienvenidos a Price Watcher!! 😀  \n\nEn el siguiente tutorial explicaremos en menos de un minuto cómo usar la aplicación</string>
+    <string name="tutorial_presentation_target">Bienvenidos a Cazachollo!! 😀  \n\nEn el siguiente tutorial explicaremos en menos de un minuto cómo usar la aplicación</string>
     <string name="tutorial_search_url_target">En este campo introduce la url del producto el cual quieres ser notificado cuando baje de precio o esté disponible</string>
     <string name="tutorial_store_select_target">Actualmente soportamos Aliexpress ,Amazon, MediaMarkt, PcComponentes, el Corte Inglés y Carrefour, y añadiremos más tiendas en el futuro!!</string>
     <string name="tutorial_search_store_target">Una vez introducido la url del producto e indicado su tienda, pulse sobre el botón de la lupa y buscaremos tu producto 🕵️‍♂️</string>

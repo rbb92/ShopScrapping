@@ -3,6 +3,7 @@ package com.example.shopscrapping.ui.screens
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Point
 import android.util.Log
 import android.view.View
@@ -67,7 +68,8 @@ fun ScrappingHomeContent(
     activity: Activity,
     modifier: Modifier,
     homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    requestNotifications: () -> Unit
+    requestNotifications: () -> Unit,
+    intent: Intent
 ) {
     val homeUiState = homeViewModel.homeUIState.collectAsState().value
 
@@ -96,6 +98,11 @@ fun ScrappingHomeContent(
         )
     )
 //    TODO Migrar a Scaffold? https://developer.android.com/develop/ui/compose/components/scaffold?hl=es-419
+    var sharedText by remember { mutableStateOf("") }
+    handleShareIntent(intent) { text ->
+        sharedText = text
+    }
+
     Box(modifier = modifier) {
         Row(modifier = Modifier.fillMaxSize()) {}
             Column(
@@ -112,6 +119,7 @@ fun ScrappingHomeContent(
                                 horizontal = 16.dp
                             ),
                         homeViewModel = homeViewModel,
+                        initialUrl = sharedText,
                         activity = activity
                     )
                     TabsTypes.ScrapListScreen -> ScrapingListScreen( modifier =
@@ -325,6 +333,19 @@ private data class NavigationItemContent(
     val icon: ImageVector,
     val text: String
 )
+
+fun handleShareIntent(intent: Intent, onTextReceived: (String) -> Unit) {
+    if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+        intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
+            val urlRegex = "(https?://[\\w-]+(\\.[\\w-]+)+(/[\\w-.,@?^=%&:;/~+#]*)?)".toRegex()
+            val matchResult = urlRegex.find(sharedText)
+            matchResult?.value?.let { url ->
+                onTextReceived(url)
+            }
+        }
+    }
+}
+
 
 
 //@Composable

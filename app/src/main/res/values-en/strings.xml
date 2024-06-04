@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ShopScrapping</string>
+    <string name="app_name">Deal hunter</string>
 
     <string name="tab_scrapping">Search</string>
     <string name="tab_scrapping_field_placeholder">url…</string>
@@ -64,7 +64,7 @@
     <string name="toast_product_added">🤞 Added new product</string>
 
 
-    <string name="tutorial_presentation_target">Welcome to Price Watcher!!! 😀 In the following tutorial we will explain step by step how to use the application.</string>
+    <string name="tutorial_presentation_target">Welcome to Deal Hunter!!! 😀 In the following tutorial we will explain step by step how to use the application.</string>
     <string name="tutorial_search_url_target">In this field enter the url of the product you want to be notified when the price drops or becomes available.</string>
     <string name="tutorial_store_select_target">We currently support Aliexpress and Amazon, for Aliexpress you can configure the country so that the prices are adapted to your area.</string>
     <string name="tutorial_search_store_target">Once you have entered the url, click on the magnifying glass button and we will search for your product.</string>
@@ -78,8 +78,8 @@
     <string name="notification_buy_button">🛒 Buy</string>
 
     <string name="notification_price_drop">🎉 New! Price reduction!</string>
-    <string name="notification_price_drop_refur">🎉 </string>
-    <string name="notification_refur_stock">🎉 New! Price reduction on refurbished!</string>
+    <string name="notification_price_drop_refur">🎉 New! Price reduction on refurbished!</string>
+    <string name="notification_refur_stock">🎉 New! Available on refurbished!</string>
     <string name="notification_again_stock">🎉 New! Available again</string>
 
 

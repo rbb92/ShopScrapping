@@ -1,19 +1,17 @@
 package com.example.shopscrapping.ui
 
 import android.app.Activity
-import android.content.Context
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.shopscrapping.ui.screens.ScrappingHomeContent
 
 @Composable
 fun ShopScrappingApp(
-    context: Context,
-    windowSize: WindowWidthSizeClass,
     activity: Activity,
     modifier: Modifier = Modifier,
     requestNotifications: () -> Unit,
+    intent: Intent,
 ) {
 
 
@@ -37,6 +35,7 @@ fun ShopScrappingApp(
     ScrappingHomeContent(
         activity = activity,
         requestNotifications = requestNotifications,
+        intent = intent,
         modifier = modifier
     )
 }

@@ -91,6 +91,7 @@ fun ScrapingScreen(
     modifier: Modifier,
     scrapViewModel: ScrapViewModel = viewModel(factory = AppViewModelProvider.Factory),
     homeViewModel: HomeViewModel,
+    initialUrl: String,
     activity: Activity
 )
 {
@@ -101,8 +102,15 @@ fun ScrapingScreen(
         scrapViewModel.scrapeUrl(url, store, country)
     }
 
-    var urlText by remember { mutableStateOf("") }
-    var currentStore by remember { mutableStateOf(Store.NULL) }
+    var urlText by remember { mutableStateOf(initialUrl) }
+
+    var currentStore by remember {
+        if(urlText == "")
+            mutableStateOf(Store.NULL)
+        else
+            mutableStateOf(scrapViewModel.detectStoreFromURL(urlText))
+    }
+
     var currentCountry by remember { mutableStateOf(CountriesCode.ES) }
 //    var isScrappingProcess by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
