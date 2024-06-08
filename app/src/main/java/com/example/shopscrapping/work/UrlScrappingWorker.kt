@@ -146,7 +146,7 @@ class UrlScrappingWorker(
 
         product.let {
             val modifiedProduct = it.copy(precioActual = dataForWorkCore.currentPrice,
-                precioActualGobal = dataForWorkCore.currentMinPrice)
+                precioActualGobal = if(dataForWorkCore.currentMinPrice != 0.0f) dataForWorkCore.currentMinPrice else dataForWorkCore.currentPrice)
             databaseRepository.updateProduct(modifiedProduct)
             Log.d("ablanco","new Entity for Product updated: ${modifiedProduct}")
         }

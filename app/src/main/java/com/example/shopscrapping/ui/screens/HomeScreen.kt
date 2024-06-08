@@ -75,6 +75,7 @@ fun ScrappingHomeContent(
 
     var tabSelection by remember { mutableStateOf( TabsTypes.ScrapScreen) }
     var tutorialActivated by remember { mutableStateOf( false) }
+    var requestPermissionActivated by remember { mutableStateOf( false) }
 
     Log.d("ablancom","por HomeScreen")
 
@@ -159,9 +160,15 @@ fun ScrappingHomeContent(
     if(!tutorialActivated and !PreferencesManager(LocalContext.current).isMainTutorialCompleted())
     {
         tutorialActivated = true
+        requestPermissionActivated = true
         LaunchGlobalTutorial(context = LocalContext.current , activity = activity, requestNotifications)
         PreferencesManager(LocalContext.current).mainTutorialCompleted()
 
+    }
+    else if(! tutorialActivated and !requestPermissionActivated)
+    {
+        requestPermissionActivated = true
+        requestNotifications()
     }
 
 

@@ -3,10 +3,16 @@ package com.example.shopscrapping
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -32,10 +38,9 @@ class MainActivity : ComponentActivity() {
                     val activity: Activity = this
 //                    requestNotificationPermission()
                     ShopScrappingApp(
-                        context = applicationContext,
-                        windowSize = windowSize.widthSizeClass,
                         requestNotifications = {requestNotificationPermission()},
-                        activity = activity
+                        activity = activity,
+                        intent = intent
                     )
                 }
             }
@@ -67,12 +72,11 @@ class MainActivity : ComponentActivity() {
                     this, permission
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Action to take when permission is already granted
-//                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show()
                 }
 
                 shouldShowRequestPermissionRationale(permission) -> {
                     // Action to take when permission was denied
-//                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+                    requestPermissionLauncher.launch(permission)
                 }
 
                 else -> {

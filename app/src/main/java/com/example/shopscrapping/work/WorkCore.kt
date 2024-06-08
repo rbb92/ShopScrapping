@@ -114,7 +114,7 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
                 {
                     //GENERAMOS NOTIFICACION!!
                     mainGoalNotification(inputData.name, context.getString(R.string.notification_stock),
-                        inputData.urlReferido, inputData.imgSrc, "${inputData.currentMinPrice} ${currencyToString(inputData.currency)}")
+                        inputData.urlReferido, inputData.imgSrc, "${if (inputData.currentMinPrice > 0.0f) inputData.currentMinPrice else inputData.currentPrice} ${currencyToString(inputData.currency)}")
                     return true
                 }
             }
@@ -139,7 +139,7 @@ class WorkCore(val context: Context, val inputData: RequirementsForWork) {
                 {
                     //GENERAMOS NOTIFICACION!!
                     mainGoalNotification(inputData.name, context.getString(R.string.notification_price_limite),
-                        inputData.urlReferido, inputData.imgSrc, "${inputData.currentMinPrice} ${currencyToString(inputData.currency)}")
+                        inputData.urlReferido, inputData.imgSrc, "${if (inputData.currentMinPrice > 0.0f) inputData.currentMinPrice else inputData.currentPrice} ${currencyToString(inputData.currency)}")
                     return true
                 }
             }
