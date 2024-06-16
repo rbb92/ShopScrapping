@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.shopscrapping"
+    namespace = "com.rbb92.cazachollo"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.shopscrapping"
+        applicationId = "com.rbb92.cazachollo"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
